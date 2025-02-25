@@ -32,3 +32,12 @@ Route::post('/judicial/transfer-of-ownership', [JudicialController::class, 'step
 Route::post('/judicial/bulletin', [JudicialController::class, 'step9'])->name('judicial.step9');
 Route::post('/judicial/observations', [JudicialController::class, 'step10'])->name('judicial.step10');
 Route::post('/judicial/finish', [JudicialController::class, 'finish'])->name('judicial.finish');
+
+Route::get('/account', function () {
+    return view('users.account');
+})->name('account');
+
+use App\Http\Controllers\Auth\PasswordRecoveryController;
+
+Route::get('/password/recovery', [PasswordRecoveryController::class, 'showRecoveryForm'])->name('password.recovery');
+Route::post('/password/recovery', [PasswordRecoveryController::class, 'submitRecoveryForm'])->name('password.recovery.submit');

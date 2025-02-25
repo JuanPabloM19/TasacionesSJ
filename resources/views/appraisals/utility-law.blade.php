@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
+@section('title', 'Ley de Utilidad Pública')
+
+
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+
     @include('components.progress-bar', ['step' => 3])
 
     <h2 class="text-center mb-4">Ley de Utilidad Pública</h2>

@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
+@section('title', 'Notificación de Acto Expropiatorio')
+
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+
     @include('components.progress-bar', ['step' => 4])
 
     <h2 class="text-center mb-4">Notificación de Acto Expropiatorio</h2>

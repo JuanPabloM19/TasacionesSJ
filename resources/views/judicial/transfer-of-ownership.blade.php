@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
+@section('title', 'Transferencia de Dominio')
+
+
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+
     @include('components.progress-bar-judicial', ['step' => 8])
 
     <h2 class="text-center mb-4">Transferencia de Dominio</h2>

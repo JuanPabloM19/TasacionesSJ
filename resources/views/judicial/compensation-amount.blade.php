@@ -1,6 +1,10 @@
 @extends('layouts.app')
+@section('title', 'Monto Indemnizatorio a Pagar')
+
 
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+
     @include('components.progress-bar-judicial', ['step' => 7])
 
     <h2 class="text-center mb-4">Monto Indemnizatorio a Pagar</h2>

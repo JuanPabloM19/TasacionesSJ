@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
+@section('title', 'Aceptación de Monto Acordado')
+
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+
     @include('components.progress-bar', ['step' => 5])
 
     <h2 class="text-center mb-4">Aceptación de Monto Acordado</h2>

@@ -1,5 +1,9 @@
 @extends('layouts.app')
+@section('title', 'Boletín Oficial')
+
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+
     @include('components.progress-bar-judicial', ['step' => 9])
 
     <h2 class="text-center mb-4">Boletín Oficial</h2>

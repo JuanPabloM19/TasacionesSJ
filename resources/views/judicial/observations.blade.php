@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
+@section('title', 'Observaciones')
+
+
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+
     @include('components.progress-bar-judicial', ['step' => 10])
 
     <h2 class="text-center mb-4">Observaciones</h2>

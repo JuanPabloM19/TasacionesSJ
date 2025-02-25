@@ -3,18 +3,23 @@
 @section('title', 'Listado de Usuarios')
 
 @section('content')
-<div class="container">
-    <h1 class="mb-4 text-center">Listado de Usuarios - Alta/Baja</h1>
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 
-    <table class="table table-bordered text-center">
-        <thead class="table-dark">
+<div class="container user-container">
+    <div class="header-section d-flex justify-content-between align-items-center mb-3">
+        <h1>Listado de Usuarios - Alta/Baja</h1>
+    </div>
+
+    <table class="table table-hover">
+        <thead>
             <tr>
                 <th>USER</th>
                 <th>CONTRASEÑA</th>
+                <th>CORREO</th>
                 <th>NOMBRE</th>
                 <th>APELLIDO</th>
                 <th>FECHA DE ALTA</th>
-                <th>MATRÍCULA</th>
+                <th>DNI</th>
                 <th>TELÉFONO</th>
                 <th>Acciones</th>
             </tr>
@@ -23,16 +28,17 @@
             <tr>
                 <td>usuario1</td>
                 <td>******</td>
+                <td>usuario1@gmail.com</td>
                 <td>Juan</td>
                 <td>Pérez</td>
                 <td>2024-02-20</td>
                 <td>123456</td>
                 <td>123456789</td>
                 <td>
-                    <button class="btn btn-warning btn-sm me-2" data-bs-toggle="modal" data-bs-target="#editUserModal">
+                    <button class="btn btn-warning btn-sm action-btn" data-bs-toggle="modal" data-bs-target="#editUserModal">
                         ✏️
                     </button>
-                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
+                    <button class="btn btn-danger btn-sm action-btn" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
                         ❌
                     </button>
                 </td>
@@ -41,11 +47,9 @@
     </table>
 
     <!-- Botón para agregar usuario -->
-    <div class="text-center mt-4">
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">
+        <button class="btn btn-success add-btn" data-bs-toggle="modal" data-bs-target="#addUserModal">
             Agregar Nuevo Usuario
         </button>
-    </div>
 </div>
 
 <!-- Modal para Editar Usuario -->
@@ -67,6 +71,10 @@
                         <input type="password" class="form-control">
                     </div>
                     <div class="mb-2">
+                        <label class="form-label">Correo</label>
+                        <input type="text" class="form-control" value="usuario1@gmail.com">
+                    </div>
+                    <div class="mb-2">
                         <label class="form-label">Nombre</label>
                         <input type="text" class="form-control" value="Juan">
                     </div>
@@ -79,14 +87,14 @@
                         <input type="date" class="form-control" value="2024-02-20">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Matrícula</label>
+                        <label class="form-label">Dni</label>
                         <input type="text" class="form-control" value="123456">
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Teléfono</label>
                         <input type="text" class="form-control" value="123456789">
                     </div>
-                    <button type="button" class="btn btn-primary w-100">Guardar Cambios</button>
+                    <button type="button" class="btn btn-success w-100">Guardar Cambios</button>
                 </form>
             </div>
         </div>
@@ -128,6 +136,10 @@
                         <input type="password" class="form-control">
                     </div>
                     <div class="mb-2">
+                        <label class="form-label">Correo</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="mb-2">
                         <label class="form-label">Nombre</label>
                         <input type="text" class="form-control">
                     </div>
@@ -140,7 +152,7 @@
                         <input type="date" class="form-control">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Matrícula</label>
+                        <label class="form-label">Dni</label>
                         <input type="text" class="form-control">
                     </div>
                     <div class="mb-2">
@@ -153,4 +165,53 @@
         </div>
     </div>
 </div>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+    }
+
+    .header-section h1 {
+        color: #ff6200;
+        font-size: 28px;
+    }
+
+    .user-container {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        margin-top: 50px;
+    }
+
+    table.table thead th {
+        background: #ff6200;
+        color: white;
+        border: none;
+    }
+
+    table.table tbody tr:hover {
+        background: #fdf2e9;
+    }
+
+
+    .action-btn, .export-btn, .add-btn {
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        margin-right: 5px;
+    }
+
+    .action-btn:hover, .export-btn:hover, .add-btn:hover {
+        transform: scale(1.05);
+    }
+
+    .modal-header {
+        background: #ff6200;
+        color: white;
+    }
+
+    .modal-header .btn-close {
+        filter: invert(1);
+    }
+</style>
 @endsection

@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
+@section('title', 'Individualización de Inmuebles')
+
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+
     @include('components.progress-bar', ['step' => 1]) {{-- Muestra la barra con el primer paso activo --}}
 
     <h2 class="text-center mb-4">Individualización de Inmuebles</h2>
