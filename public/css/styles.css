@@ -19,31 +19,38 @@ body {
     .dropdown button {
         font-size: 0.9rem;
         padding: 8px 10px;
+        border-radius: 15px;
     }
 
     .table-responsive {
         overflow-x: auto;
         display: block;
         white-space: nowrap;
+        border-radius: 15px;
     }
 
     .table {
         width: 100%;
+        border-radius: 15px;
     }
 
     .table td, .table th {
         padding: 8px;
         font-size: 14px;
+        border-radius: 15px;
     }
     .action-btn {
         padding: 4px 8px;
         font-size: 12px;
+        border-radius: 15px;
     }
     .action-btn span {
         display: none;
+        border-radius: 15px;
     }
     .modal-content {
         max-width: 90%;
+        border-radius: 15px;
     }
 
     /* Modal content width adjustment */
@@ -51,10 +58,13 @@ body {
     .modal-dialog {
         max-width: 100%;
         margin: 0;
+        border-radius: 15px;
+        padding-top: 20px;
     }
 
     .modal-content {
         border-radius: 0;
+        border-radius: 15px;
     }
 }
 
@@ -62,15 +72,19 @@ body {
 @media (max-width: 576px) {
     .modal-header {
         padding: 10px 15px;
+        border-radius: 15px;
     }
 
     .modal-body {
         padding: 15px;
+        border-radius: 15px;
     }
 
     .modal-footer {
         padding: 10px 15px;
+        border-radius: 15px;
     }
+
 }
 
 /* Ensure modal content is properly centered on smaller screens */
@@ -78,6 +92,7 @@ body {
     .modal-content {
         width: 100%;
         margin: 0 auto;
+        border-radius: 15px;
     }
 }
 
@@ -88,6 +103,7 @@ body {
     .modal-body .form-control {
         width: 100%;
         padding: 10px;
+        border-radius: 15px;
     }
 }
 
@@ -96,6 +112,7 @@ body {
     .modal-footer button {
         width: 100%;
         margin-top: 5px;
+        border-radius: 15px;
     }
 }
 

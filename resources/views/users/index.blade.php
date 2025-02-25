@@ -13,14 +13,14 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>USER</th>
-                <th>CONTRASEÑA</th>
-                <th>CORREO</th>
-                <th>NOMBRE</th>
-                <th>APELLIDO</th>
-                <th>FECHA DE ALTA</th>
-                <th>DNI</th>
-                <th>TELÉFONO</th>
+                <th>User</th>
+                <th>Contraseña</th>
+                <th>Correo</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Fecha de Alta</th>
+                <th>Dni</th>
+                <th>Telefono</th>
                 <th>Acciones</th>
             </tr>
         </thead>
