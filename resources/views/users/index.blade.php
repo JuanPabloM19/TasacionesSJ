@@ -9,7 +9,7 @@
     <div class="header-section d-flex justify-content-between align-items-center mb-3">
         <h1>Listado de Usuarios - Alta/Baja</h1>
     </div>
-
+    <div class="table-responsive">
     <table class="table table-hover">
         <thead>
             <tr>
@@ -45,6 +45,7 @@
             </tr>
         </tbody>
     </table>
+</div>
 
     <!-- Botón para agregar usuario -->
         <button class="btn btn-success add-btn" data-bs-toggle="modal" data-bs-target="#addUserModal">

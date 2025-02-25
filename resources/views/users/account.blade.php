@@ -176,22 +176,23 @@
 
         /* Notificación flotante */
         .notification {
-            position: fixed;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 5px;
-            font-size: 14px;
-            opacity: 0;
-            transition: all 0.5s ease-in-out;
-        }
+    position: fixed;
+    top: 20px; /* Cambiado de -50px a 20px */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
+    z-index: 1000; /* Asegura que la notificación esté por encima de otros elementos */
+}
 
-        .notification.show {
-            top: 20px;
-            opacity: 1;
-        }
+.notification.show {
+    opacity: 1;
+}
+
     </style>
 @endsection

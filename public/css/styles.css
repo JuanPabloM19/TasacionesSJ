@@ -4,3 +4,99 @@ body {
     margin: 0;
     padding: 0;
 }
+@media (max-width: 768px) {
+    .header-section {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 10px;
+    }
+
+    .header-section h1 {
+        font-size: 1.5rem;
+    }
+
+    .export-btn,
+    .dropdown button {
+        font-size: 0.9rem;
+        padding: 8px 10px;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        display: block;
+        white-space: nowrap;
+    }
+
+    .table {
+        width: 100%;
+    }
+
+    .table td, .table th {
+        padding: 8px;
+        font-size: 14px;
+    }
+    .action-btn {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+    .action-btn span {
+        display: none;
+    }
+    .modal-content {
+        max-width: 90%;
+    }
+
+    /* Modal content width adjustment */
+@media (max-width: 576px) {
+    .modal-dialog {
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .modal-content {
+        border-radius: 0;
+    }
+}
+
+/* Adjust modal header padding */
+@media (max-width: 576px) {
+    .modal-header {
+        padding: 10px 15px;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
+
+    .modal-footer {
+        padding: 10px 15px;
+    }
+}
+
+/* Ensure modal content is properly centered on smaller screens */
+@media (max-width: 576px) {
+    .modal-content {
+        width: 100%;
+        margin: 0 auto;
+    }
+}
+
+/* Adjust form inputs inside modals for smaller screens */
+@media (max-width: 576px) {
+    .modal-body input[type="text"],
+    .modal-body input[type="date"],
+    .modal-body .form-control {
+        width: 100%;
+        padding: 10px;
+    }
+}
+
+/* Ensure buttons in modals fit within smaller screens */
+@media (max-width: 576px) {
+    .modal-footer button {
+        width: 100%;
+        margin-top: 5px;
+    }
+}
+
+}

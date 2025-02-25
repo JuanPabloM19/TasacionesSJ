@@ -65,10 +65,6 @@
         background: transparent;
     }
 
-    .navbar-toggler-icon {
-        background-color: #fff;
-    }
-
     /* Personalización de los enlaces activos */
     .nav-link.active {
         color: #ff6200 !important;
