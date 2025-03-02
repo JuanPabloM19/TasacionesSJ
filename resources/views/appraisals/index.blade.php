@@ -23,127 +23,142 @@
         </div>
     </div>
     <div class="table-responsive">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>Nomenclatura</th>
-                <th>Inscripción de Dominio</th>
-                <th>Ubicación</th>
-                <th>Nro Plano</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php
-                $tasaciones = [
-                    ['id' => 1, 'nomenclatura' => '123-ABC', 'inscripcion_dominio' => '456XYZ', 'ubicacion' => 'San Juan', 'nro_plano' => '789', 'estado' => 'Administrativa'],
-                    ['id' => 2, 'nomenclatura' => '456-DEF', 'inscripcion_dominio' => '789XYZ', 'ubicacion' => 'Pocito', 'nro_plano' => '321', 'estado' => 'Judicial'],
-                    ['id' => 3, 'nomenclatura' => '789-GHI', 'inscripcion_dominio' => '101XYZ', 'ubicacion' => 'Rawson', 'nro_plano' => '654', 'estado' => 'Finalizado'],
-                ];
-            @endphp
-
-            @foreach($tasaciones as $tasacion)
+        <table class="table table-hover">
+            <thead>
                 <tr>
-                    <td>{{ $tasacion['nomenclatura'] }}</td>
-                    <td>{{ $tasacion['inscripcion_dominio'] }}</td>
-                    <td>{{ $tasacion['ubicacion'] }}</td>
-                    <td>{{ $tasacion['nro_plano'] }}</td>
-                    <td>
-                        @if($tasacion['estado'] == 'Administrativa')
-                            <span class="badge bg-warning">Administrativa</span>
-                        @elseif($tasacion['estado'] == 'Judicial')
-                            <span class="badge bg-danger">Judicial</span>
-                        @else
-                            <span class="badge bg-success">Finalizado</span>
-                        @endif
-                    </td>
-                    <td>
-                        @if($tasacion['estado'] == 'Administrativa')
-                            <a href="{{ route('judicial.step6') }}" class="btn btn-warning action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Continuar a Judicial">
-                                <i class="fas fa-arrow-right"></i> Ir a Judicial
-                            </a>
-                            <button class="btn btn-success action-btn" data-bs-toggle="modal" data-bs-target="#finalizeModal{{ $tasacion['id'] }}">
-                                <i class="fas fa-check"></i> Finalizar
-                            </button>
-                            <a href="{{ route('appraisals.step1') }}" class="btn btn-primary action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Tasación">
-                                <i class="fas fa-edit"></i> Editar
-                            </a>
-                            <button class="btn btn-danger action-btn" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $loop->index }}" title="Eliminar Tasación">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </button>
-                        @elseif($tasacion['estado'] == 'Judicial')
-                            <button class="btn btn-warning action-btn" data-bs-toggle="modal" data-bs-target="#judicialModal{{ $tasacion['id'] }}">
-                                <i class="fas fa-plus"></i> Cargar datos
-                            </button>
-                            <button class="btn btn-success action-btn" data-bs-toggle="modal" data-bs-target="#finalizeModal{{ $tasacion['id'] }}">
-                                <i class="fas fa-check"></i> Finalizar
-                            </button>
-                            <a href="{{ route('judicial.step6') }}" class="btn btn-primary action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Tasación">
-                                <i class="fas fa-edit"></i> Editar
-                            </a>
-                            <button class="btn btn-danger action-btn" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $loop->index }}" title="Eliminar Tasación">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </button>
-                        @else
-                            <a href="{{ route('appraisals.step1') }}" class="btn btn-primary action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar Tasación">
-                                <i class="fas fa-edit"></i> Editar
-                            </a>
-                            <button class="btn btn-danger action-btn" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $loop->index }}" title="Eliminar Tasación">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </button>
-                        @endif
-                    </td>
+                    <th>Nomenclatura</th>
+                    <th>Inscripción de Dominio</th>
+                    <th>Ubicación</th>
+                    <th>Nro Plano</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
                 </tr>
+            </thead>
+            <tbody>
+                @foreach($tasaciones as $tasacion)
+                    <tr>
+                        <td>{{ $tasacion->nomenclatura }}</td>
+                        <td>{{ $tasacion->inscripcion_dominio }}</td>
+                        <td>{{ $tasacion->ubicacion }}</td>
+                        <td>{{ $tasacion->nro_plano }}</td>
+                        <td>
+                            @switch($tasacion->estado)
+                                @case('step1')
+                                    Individualización de Inmuebles (STEP 1)
+                                    @break
+                                @case('step2')
+                                    Organismo Expropiante (STEP 2)
+                                    @break
+                                @case('step3')
+                                    Ley de Utilidad Pública (STEP 3)
+                                    @break
+                                @case('step4')
+                                    Notificación Acto Expropiatorio (STEP 4)
+                                    @break
+                                @case('step5')
+                                    Aceptación del Monto (STEP 5)
+                                    @break
+                                @case('completed')
+                                    Completado
+                                    @break
+                                @default
+                                    Estado Desconocido
+                            @endswitch
+                        </td>
+                        <td>
+                            @if($tasacion->estado != 'completed')
+                                <a href="{{ route('appraisals.step' . (substr($tasacion->estado, -1) + 1), ['id' => $tasacion->id]) }}" class="btn btn-warning action-btn" title="Continuar a siguiente paso">
+                                    <i class="fas fa-arrow-right"></i> Continuar
+                                </a>
+                            @endif
+                            <!-- Botón para abrir el modal de selección de pasos -->
+                            <button class="btn btn-primary action-btn" title="Editar Tasación" data-bs-toggle="modal" data-bs-target="#editModal{{ $tasacion->id }}">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="btn btn-danger action-btn" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $loop->index }}" title="Eliminar Tasación">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                            <!-- Modal de Eliminar -->
+                            <div class="modal fade" id="deleteModal{{ $loop->index }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirmar Eliminación</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            ¿Está seguro de que desea eliminar esta tasación?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <form action="{{ route('appraisals.destroy', ['id' => $tasacion->id]) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                <!-- Modal de Finalización -->
-                <div class="modal fade" id="finalizeModal{{ $tasacion['id'] }}" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Confirmar Finalización</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                ¿Está seguro de que desea finalizar esta tasación?
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <form>
-                                    <button type="submit" class="btn btn-warning">Finalizar</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 
-                <!-- Modal de Carga Judicial -->
-                <div class="modal fade" id="judicialModal{{ $tasacion['id'] }}" tabindex="-1" aria-labelledby="judicialModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Cargar Datos Judiciales</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                ¿Desea cargar los datos judiciales y continuar?
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <form action="{{ route('judicial.step6', $tasacion['id']) }}" method="GET">
-                                    @csrf
-                                    <button type="submit" class="btn btn-success">Cargar</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </tbody>
-    </table>
+    <form method="GET" action="{{ route('appraisals.step1') }}">
+        <button type="submit" class="btn btn-success add-btn">Agregar Tasación</button>
+    </form>
+
+    <p>La URL generada es: {{ route('appraisals.step1') }}</p>
 </div>
 
-    <a href="{{ route('appraisals.step1') }}" class="btn btn-success add-btn">Agregar Tasación</a>
+<!-- Modal de Selección de Pasos -->
+<div class="modal fade" id="editModal{{ $tasacion->id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Tasación: {{ $tasacion->nomenclatura }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Selecciona el paso que deseas editar:</p>
+                <ul class="list-group">
+                    @if($tasacion->estado >= 'step1')
+                        <li class="list-group-item">
+                            <a href="{{ route('appraisals.step1', ['id' => $tasacion->id]) }}" class="btn btn-link">Step 1: Individualización de Inmuebles</a>
+                        </li>
+                    @endif
+                    @if($tasacion->estado >= 'step2')
+                        <li class="list-group-item">
+                            <a href="{{ route('appraisals.step2', ['id' => $tasacion->id]) }}" class="btn btn-link">Step 2: Organismo Expropiante</a>
+                        </li>
+                    @endif
+                    @if($tasacion->estado >= 'step3')
+                        <li class="list-group-item">
+                            <a href="{{ route('appraisals.step3', ['id' => $tasacion->id]) }}" class="btn btn-link">Step 3: Ley de Utilidad Pública</a>
+                        </li>
+                    @endif
+                    @if($tasacion->estado >= 'step4')
+                        <li class="list-group-item">
+                            <a href="{{ route('appraisals.step4', ['id' => $tasacion->id]) }}" class="btn btn-link">Step 4: Notificación Acto Expropiatorio</a>
+                        </li>
+                    @endif
+                    @if($tasacion->estado >= 'step5')
+                        <li class="list-group-item">
+                            <a href="{{ route('appraisals.step5', ['id' => $tasacion->id]) }}" class="btn btn-link">Step 5: Aceptación del Monto</a>
+                        </li>
+                    @endif
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Modal de Exportación -->
 <div class="modal fade" id="exportModal" tabindex="-1" aria-hidden="true">

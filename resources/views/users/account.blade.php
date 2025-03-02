@@ -5,63 +5,57 @@
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 
-    <div class="account-container">
-        <h2 class="title">Mi Cuenta</h2>
+<div class="account-container">
+    <h2 class="title">Mi Cuenta</h2>
 
-        <form class="account-form">
-            <div class="form-group">
-                <label>Usuario</label>
-                <div class="input-group">
-                    <input type="text" value="JuanP123" readonly>
-                    <span class="edit-icon" onclick="enableEdit(this)">&#9998;</span>
-                </div>
+    <form class="account-form" method="POST" action="{{ route('account.update') }}">
+        @csrf
+
+        <div class="form-group">
+            <label>Usuario</label>
+            <div class="input-group">
+                <input type="text" name="username" value="{{ old('username', $user->username) }}" readonly>
+                <span class="edit-icon" onclick="enableEdit(this)">&#9998;</span>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label>Contraseña</label>
-                <div class="input-group">
-                    <input type="password" value="*********" readonly>
-                    <span class="edit-icon" onclick="enableEdit(this)">&#9998;</span>
-                </div>
+        <div class="form-group">
+            <label>Correo</label>
+            <div class="input-group">
+                <input type="email" name="email" value="{{ old('email', $user->email) }}" readonly>
+                <span class="edit-icon" onclick="enableEdit(this)">&#9998;</span>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label>Correo</label>
-                <div class="input-group">
-                    <input type="email" value="juan.perez@email.com" readonly>
-                    <span class="edit-icon" onclick="enableEdit(this)">&#9998;</span>
-                </div>
+        <div class="form-group">
+            <label>Nombre</label>
+            <div class="input-group">
+                <input type="text" name="nombre" value="{{ old('nombre', $user->nombre) }}" readonly>
+                <span class="edit-icon" onclick="enableEdit(this)">&#9998;</span>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label>Nombre</label>
-                <div class="input-group">
-                    <input type="text" value="Juan Pablo" readonly>
-                    <span class="edit-icon" onclick="enableEdit(this)">&#9998;</span>
-                </div>
+        <div class="form-group">
+            <label>Apellido</label>
+            <div class="input-group">
+                <input type="text" name="apellido" value="{{ old('apellido', $user->apellido) }}" readonly>
+                <span class="edit-icon" onclick="enableEdit(this)">&#9998;</span>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label>Apellido</label>
-                <div class="input-group">
-                    <input type="text" value="Pérez" readonly>
-                    <span class="edit-icon" onclick="enableEdit(this)">&#9998;</span>
-                </div>
+        <div class="form-group">
+            <label>Teléfono</label>
+            <div class="input-group">
+                <input type="tel" name="telefono" value="{{ old('telefono', $user->telefono) }}" readonly>
+                <span class="edit-icon" onclick="enableEdit(this)">&#9998;</span>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label>Teléfono</label>
-                <div class="input-group">
-                    <input type="tel" value="123-456-7890" readonly>
-                    <span class="edit-icon" onclick="enableEdit(this)">&#9998;</span>
-                </div>
-            </div>
+        <button type="submit" class="save-btn">Guardar Cambios</button>
+    </form>
+</div>
 
-            <button type="submit" class="save-btn">Guardar Cambios</button>
-        </form>
-    </div>
-
-    <div id="notification" class="notification">Edición activada</div>
+<div id="notification" class="notification">Edición activada</div>
 
     <script>
         function enableEdit(element) {

@@ -10,21 +10,21 @@
 
     <h2 class="text-center mb-4">Ley de Utilidad Pública</h2>
 
-    <form method="POST" action="{{ route('appraisals.step4') }}" class="p-4 shadow rounded bg-light" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('appraisals.step3', ['id' => $tasacion->id]) }}" class="p-4 shadow rounded bg-light" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
             <label for="numero" class="form-label">Número:</label>
-            <input type="number" name="numero" class="form-control" id="numero" required>
+            <input type="number" name="numero" class="form-control" id="numero" value="{{ old('numero', $tasacion->numero) }}" required>
         </div>
 
         <div class="mb-3">
             <label for="fecha" class="form-label">Fecha:</label>
-            <input type="date" name="fecha" class="form-control" id="fecha" required>
+            <input type="date" name="fecha" class="form-control" id="fecha" value="{{ old('fecha', $tasacion->fecha) }}" required>
         </div>
 
         <div class="mb-3">
             <label for="boletin_oficial" class="form-label">Boletín Oficial:</label>
-            <input type="text" name="boletin_oficial" class="form-control" id="boletin_oficial" required>
+            <input type="text" name="boletin_oficial" class="form-control" id="boletin_oficial" value="{{ old('boletin_oficial', $tasacion->boletin_oficial) }}" required>
         </div>
 
         <div class="mb-3">

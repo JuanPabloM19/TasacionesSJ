@@ -13,7 +13,7 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>User</th>
+                <th>Username</th>
                 <th>Contraseña</th>
                 <th>Correo</th>
                 <th>Nombre</th>
@@ -25,77 +25,137 @@
             </tr>
         </thead>
         <tbody>
+            @foreach ($users as $usuario)
             <tr>
-                <td>usuario1</td>
+                <td>{{ $usuario->username }}</td>
                 <td>******</td>
-                <td>usuario1@gmail.com</td>
-                <td>Juan</td>
-                <td>Pérez</td>
-                <td>2024-02-20</td>
-                <td>123456</td>
-                <td>123456789</td>
+                <td>{{ $usuario->email }}</td>
+                <td>{{ $usuario->nombre }}</td>
+                <td>{{ $usuario->apellido }}</td>
+                <td>{{ $usuario->created_at->format('Y-m-d') }}</td>
+                <td>{{ $usuario->dni }}</td>
+                <td>{{ $usuario->telefono }}</td>
                 <td>
-                    <button class="btn btn-warning btn-sm action-btn" data-bs-toggle="modal" data-bs-target="#editUserModal">
+                    <button class="btn btn-warning btn-sm action-btn" data-bs-toggle="modal" data-bs-target="#editUserModal-{{ $usuario->id }}">
                         ✏️
                     </button>
-                    <button class="btn btn-danger btn-sm action-btn" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
-                        ❌
-                    </button>
+                    <button>
+                    <form action="{{ route('users.destroy', $usuario->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-danger btn-sm action-btn">🗑️</button>
+                    </form>
+                </button>
                 </td>
             </tr>
+
+            <!-- Modal Editar Usuario -->
+            <div class="modal fade" id="editUserModal-{{ $usuario->id }}" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Editar Usuario</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ route('users.update', $usuario->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+
+                                <input type="hidden" name="id" value="{{ $usuario->id }}">
+
+                                <div class="mb-2">
+                                    <label class="form-label">Usuario</label>
+                                    <input type="text" class="form-control" name="username" value="{{ $usuario->username }}">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Correo</label>
+                                    <input type="email" class="form-control" name="email" value="{{ $usuario->email }}">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" name="nombre" value="{{ $usuario->nombre }}">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Apellido</label>
+                                    <input type="text" class="form-control" name="apellido" value="{{ $usuario->apellido }}">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">DNI</label>
+                                    <input type="text" class="form-control" name="dni" value="{{ $usuario->dni }}">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Teléfono</label>
+                                    <input type="text" class="form-control" name="telefono" value="{{ $usuario->telefono }}">
+                                </div>
+                                {{-- <div class="mb-2">
+                                    <label class="form-label">Nueva Contraseña</label>
+                                    <input type="password" class="form-control" name="password">
+                                </div> --}}
+
+                                <button type="submit" class="btn btn-success w-100">Guardar Cambios</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
         </tbody>
+
     </table>
 </div>
 
     <!-- Botón para agregar usuario -->
-        <button class="btn btn-success add-btn" data-bs-toggle="modal" data-bs-target="#addUserModal">
+        <button class="btn btn-success add-btn" data-bs-toggle="modal" data-bs-target="#createUserModal">
             Agregar Nuevo Usuario
         </button>
 </div>
 
-<!-- Modal para Editar Usuario -->
-<div class="modal fade" id="editUserModal" tabindex="-1">
+<div class="modal fade" id="createUserModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Editar Usuario</h5>
+                <h5 class="modal-title">Crear Nuevo Usuario</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form>
+                <form action="{{ route('users.store') }}" method="POST">
+                    @csrf
+
                     <div class="mb-2">
                         <label class="form-label">Usuario</label>
-                        <input type="text" class="form-control" value="usuario1">
+                        <input type="text" class="form-control" name="username" required>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Contraseña</label>
-                        <input type="password" class="form-control">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" required>
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Correo</label>
-                        <input type="text" class="form-control" value="usuario1@gmail.com">
+                        <input type="email" class="form-control" name="email" required>
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Nombre</label>
-                        <input type="text" class="form-control" value="Juan">
+                        <input type="text" class="form-control" name="nombre" required>
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Apellido</label>
-                        <input type="text" class="form-control" value="Pérez">
+                        <input type="text" class="form-control" name="apellido" required>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Fecha de Alta</label>
-                        <input type="date" class="form-control" value="2024-02-20">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Dni</label>
-                        <input type="text" class="form-control" value="123456">
+                        <label class="form-label">DNI</label>
+                        <input type="text" class="form-control" name="dni" required>
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Teléfono</label>
-                        <input type="text" class="form-control" value="123456789">
+                        <input type="text" class="form-control" name="telefono">
                     </div>
-                    <button type="button" class="btn btn-success w-100">Guardar Cambios</button>
+                    <div class="mb-2">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" name="password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100">Crear Usuario</button>
                 </form>
             </div>
         </div>
@@ -118,54 +178,6 @@
     </div>
 </div>
 
-<!-- Modal para Agregar Nuevo Usuario -->
-<div class="modal fade" id="addUserModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Agregar Nuevo Usuario</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="mb-2">
-                        <label class="form-label">Usuario</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Contraseña</label>
-                        <input type="password" class="form-control">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Correo</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Nombre</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Apellido</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Fecha de Alta</label>
-                        <input type="date" class="form-control">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Dni</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Teléfono</label>
-                        <input type="text" class="form-control">
-                    </div>
-                    <button type="button" class="btn btn-success w-100">Agregar Usuario</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 <style>
     body {
