@@ -4,14 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Models\Tasacion;
 use Illuminate\Http\Request;
+use App\Exports\TasacionesExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class TasacionesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tasaciones = Tasacion::all();
+        $query = Tasacion::query();
+
+        // Filtrar por nomenclatura si se proporciona
+        if ($request->filled('nomenclatura')) {
+            $query->where('nomenclatura', 'LIKE', '%' . $request->nomenclatura . '%');
+        }
+
+        // Filtrar por estado si se proporciona
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        // Obtener las tasaciones filtradas
+        $tasaciones = $query->get();
+
         return view('appraisals.index', compact('tasaciones'));
     }
+
 
     public function step1(Request $request, $id = null)
     {
@@ -139,4 +157,8 @@ class TasacionesController extends Controller
         return redirect()->route('appraisals.index')->with('success', 'Tasación eliminada correctamente');
     }
 
+    public function export(Request $request)
+    {
+        return Excel::download(new TasacionesExport($request), 'tasaciones.xlsx');
+    }
 }

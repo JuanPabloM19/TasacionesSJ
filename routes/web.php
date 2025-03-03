@@ -53,6 +53,8 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/appraisals/{id}', [TasacionesController::class, 'destroy'])->name('appraisals.destroy');
 
+    Route::get('/appraisals/export', [TasacionesController::class, 'export'])->name('appraisals.export');
+
     Route::get('/appraisals/{id}/updateStatus/{status}', [TasacionesController::class, 'updateStatus'])->name('appraisals.updateStatus');
 
     // Rutas para el proceso judicial

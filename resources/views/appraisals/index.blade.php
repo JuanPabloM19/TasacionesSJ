@@ -23,6 +23,20 @@
         </div>
     </div>
     <div class="table-responsive">
+        @if(request()->has('nomenclatura') || request()->has('estado'))
+            <div class="alert alert-info d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Filtros activos:</strong>
+                    @if(request('nomenclatura'))
+                        <span class="badge bg-primary">Nomenclatura: {{ request('nomenclatura') }}</span>
+                    @endif
+                    @if(request('estado'))
+                        <span class="badge bg-success">Estado: {{ request('estado') }}</span>
+                    @endif
+                </div>
+                <a href="{{ route('appraisals.index') }}" class="btn btn-warning btn-sm">Quitar filtros</a>
+            </div>
+        @endif
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -34,6 +48,13 @@
                     <th>Acciones</th>
                 </tr>
             </thead>
+                @if($tasaciones->isEmpty())
+                <tr>
+                    <td colspan="6" class="text-center text-danger">
+                        No se encontraron tasaciones.
+                    </td>
+                </tr>
+                @else
             <tbody>
                 @foreach($tasaciones as $tasacion)
                     <tr>
@@ -105,17 +126,16 @@
                     </tr>
                 @endforeach
             </tbody>
+            @endif
         </table>
     </div>
-
     <form method="GET" action="{{ route('appraisals.step1') }}">
         <button type="submit" class="btn btn-success add-btn">Agregar Tasación</button>
     </form>
-
-    <p>La URL generada es: {{ route('appraisals.step1') }}</p>
 </div>
 
 <!-- Modal de Selección de Pasos -->
+@foreach($tasaciones as $tasacion)
 <div class="modal fade" id="editModal{{ $tasacion->id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -159,6 +179,7 @@
         </div>
     </div>
 </div>
+@endforeach
 
     <!-- Modal de Exportación -->
 <div class="modal fade" id="exportModal" tabindex="-1" aria-hidden="true">
@@ -212,11 +233,29 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-success">Exportar</button>
+                <button type="button" class="btn btn-success" id="exportExcel">Exportar</button>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('exportExcel').addEventListener('click', function() {
+        let params = new URLSearchParams();
+
+        // Capturar valores de los filtros
+        params.append('fechaDesde', document.getElementById('fechaDesde').value);
+        params.append('fechaHasta', document.getElementById('fechaHasta').value);
+
+        document.querySelectorAll('.form-check-input').forEach((checkbox) => {
+            if (checkbox.checked) {
+                params.append(checkbox.id, '1');
+            }
+        });
+
+        window.location.href = "{{ route('appraisals.export') }}?" + params.toString();
+    });
+</script>
 
 <!-- Modal de Búsqueda -->
 <div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
@@ -227,11 +266,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <input type="text" class="form-control" placeholder="Ingrese la nomenclatura...">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-success">Buscar</button>
+                <form method="GET" action="{{ route('appraisals.index') }}">
+                    <input type="text" class="form-control mb-2" name="nomenclatura"
+                           placeholder="Ingrese la nomenclatura..."
+                           value="{{ request('nomenclatura') }}">
+                    <button type="submit" class="btn btn-success w-100">Buscar</button>
+                </form>
             </div>
         </div>
     </div>
@@ -246,22 +286,23 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <select class="form-control">
-                    <option value="">Seleccionar estado...</option>
-                    <option value="Administrativa">Administrativa</option>
-                    <option value="Judicial">Judicial</option>
-                    <option value="Finalizado">Finalizado</option>
-                </select>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-success">Aplicar Filtro</button>
+                <form method="GET" action="{{ route('appraisals.index') }}">
+                    <select class="form-control mb-2" name="estado">
+                        <option value="">Todos los estados</option>
+                        <option value="step1" {{ request('estado') == 'step1' ? 'selected' : '' }}>Individualización de Inmuebles</option>
+                        <option value="step2" {{ request('estado') == 'step2' ? 'selected' : '' }}>Organismo Expropiante</option>
+                        <option value="step3" {{ request('estado') == 'step3' ? 'selected' : '' }}>Ley de Utilidad Pública</option>
+                        <option value="step4" {{ request('estado') == 'step4' ? 'selected' : '' }}>Notificación Acto Expropiatorio</option>
+                        <option value="step5" {{ request('estado') == 'step5' ? 'selected' : '' }}>Aceptación del Monto</option>
+                        <option value="completed" {{ request('estado') == 'completed' ? 'selected' : '' }}>Completado</option>
+                    </select>
+                    <button type="submit" class="btn btn-success w-100">Aplicar Filtro</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-</div>
 
 <style>
     body {
