@@ -5,7 +5,7 @@
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
 
-<div class="account-container">
+<div class="account-container pt-8">
     <h2 class="title">Mi Cuenta</h2>
 
     <form class="account-form" method="POST" action="{{ route('account.update') }}">
@@ -87,7 +87,7 @@
             box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
             max-width: 450px;
             margin: auto;
-            margin-top: 50px;
+            margin-top: 100px;
             text-align: center;
         }
 

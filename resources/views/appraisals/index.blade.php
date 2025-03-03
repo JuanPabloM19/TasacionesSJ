@@ -314,7 +314,7 @@
         padding: 25px;
         border-radius: 12px;
         box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-        margin-top: 50px;
+        margin-top: 100px;
     }
 
     .header-section h1 {
