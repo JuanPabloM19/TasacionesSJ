@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-
+<div class="form-container">
 <div class="progress-container">
     <div class="progress-bar">
         <div class="progress-fill" style="width: {{ (($step - 5) / 5) * 100 }}%;">
@@ -7,7 +7,7 @@
         </div>
     </div>
 </div>
-
+</div>
 <style>
     .progress-container {
         width: 100%;

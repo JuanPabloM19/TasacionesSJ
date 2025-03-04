@@ -13,19 +13,19 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             if (!Schema::hasColumn('users', 'username')) {
-                $table->string('username');
-            }  // Añadir el campo username
+                $table->string('username')->nullable();  // Permite valores nulos
+            }
             if (!Schema::hasColumn('users', 'nombre')) {
-                $table->string('nombre');
+                $table->string('nombre')->nullable();
             }
             if (!Schema::hasColumn('users', 'apellido')) {
-                $table->string('apellido');
+                $table->string('apellido')->nullable();
             }
             if (!Schema::hasColumn('users', 'dni')) {
-                $table->string('dni');
+                $table->string('dni')->nullable();
             }
             if (!Schema::hasColumn('users', 'telefono')) {
-                $table->string('telefono');
+                $table->string('telefono')->nullable();
             }
         });
     }

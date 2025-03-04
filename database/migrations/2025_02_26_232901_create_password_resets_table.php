@@ -23,8 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('password_resets', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('password_resets');
     }
+
 };

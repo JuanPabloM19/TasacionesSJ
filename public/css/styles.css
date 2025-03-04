@@ -117,3 +117,34 @@ body {
 }
 
 }
+
+    /*VISTAS BLADE DE TASACIONES ADMINISTRATIVA Y JUDICIAL*/
+
+
+    /* Ajustar el contenedor de cada formulario */
+    .form-container {
+        max-width: 800px; /* Limitar el ancho del contenedor */
+        margin: 0 auto; /* Centrarlo horizontalmente */
+    }
+
+    /* Asegurarse de que el formulario ocupe todo el ancho disponible en pantallas pequeñas */
+    @media (max-width: 768px) {
+        .form-container {
+            max-width: 100%; /* El formulario ocupará todo el ancho en pantallas pequeñas */
+            padding: 0 20px; /* Espaciado adicional para pantallas pequeñas */
+        }
+    }
+
+    /* Asegurarse de que el contenido principal no se solape con el sidebar */
+    .main-content {
+        margin-left: 250px; /* Deja espacio para el sidebar en pantallas grandes */
+        padding: 20px;
+        transition: margin-left 0.3s;
+    }
+
+    /* Responsivo para pantallas pequeñas */
+    @media (max-width: 768px) {
+        .main-content {
+            margin-left: 0; /* El contenido ocupará todo el ancho en pantallas pequeñas */
+        }
+    }

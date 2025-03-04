@@ -1,11 +1,12 @@
 <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-
+<div class="form-container">
 <div class="progress-container">
     <div class="progress-bar">
         <div class="progress-fill" style="width: {{ ($step / 5) * 100 }}%;">
             <span class="progress-label">{{ round(($step / 5) * 100) }}%</span>
         </div>
     </div>
+</div>
 </div>
 
 <style>

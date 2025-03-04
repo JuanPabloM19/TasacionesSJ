@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tasacions', function (Blueprint $table) {
+        Schema::create('tasaciones', function (Blueprint $table) {
             $table->id();
             $table->string('nomenclatura')->unique();
             $table->string('inscripcion_dominio');
@@ -51,6 +51,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tasacions');
+        Schema::dropIfExists('tasaciones');
     }
 };

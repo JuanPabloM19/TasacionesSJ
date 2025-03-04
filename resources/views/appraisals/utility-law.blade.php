@@ -10,16 +10,17 @@
 
     <h2 class="text-center mb-4">Ley de Utilidad Pública</h2>
 
+    <div class="form-container">
     <form method="POST" action="{{ route('appraisals.step3', ['id' => $tasacion->id]) }}" class="p-4 shadow rounded bg-light" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
-            <label for="numero" class="form-label">Número:</label>
-            <input type="number" name="numero" class="form-control" id="numero" value="{{ old('numero', $tasacion->numero) }}" required>
+            <label for="numero_ley" class="form-label">Número:</label>
+            <input type="numero_ley" name="numero_ley" class="form-control" id="numero_ley" value="{{ old('numero_ley', $tasacion->numero_ley) }}" required>
         </div>
 
         <div class="mb-3">
-            <label for="fecha" class="form-label">Fecha:</label>
-            <input type="date" name="fecha" class="form-control" id="fecha" value="{{ old('fecha', $tasacion->fecha) }}" required>
+            <label for="fecha_ley" class="form-label">Fecha:</label>
+            <input type="date" name="fecha_ley" class="form-control" id="fecha_ley" value="{{ old('fecha_ley', $tasacion->fecha_ley) }}" required>
         </div>
 
         <div class="mb-3">
@@ -34,4 +35,11 @@
 
         <button type="submit" class="btn btn-primary">Siguiente <i class="fas fa-arrow-right"></i></button>
     </form>
+</div>
+<div class="form-container alert alert-info d-flex align-items-center mt-4 p-3" style="background-color: #d9edf7; border-left: 5px solid #31708f; color: #31708f;">
+    <i class="fas fa-lightbulb me-2" style="font-size: 24px;"></i>
+    <div>
+        <strong>Guardado Automático:</strong> Haga clic en <b>"Siguiente"</b> y sus datos se guardarán para poder continuar en otro momento.
+    </div>
+</div>
 @endsection

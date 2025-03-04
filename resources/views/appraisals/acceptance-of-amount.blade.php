@@ -9,6 +9,7 @@
 
     <h2 class="text-center mb-4">Aceptación de Monto Acordado</h2>
 
+    <div class="form-container">
     <form method="POST" action="{{ route('appraisals.step5', ['id' => $tasacion->id]) }}" class="p-4 shadow rounded bg-light" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
@@ -29,7 +30,7 @@
 
         <div class="mb-3">
             <label for="convenio_avenamiento" class="form-label">Convenio de Avenamiento (PDF/Word):</label>
-            <input type="file" name="convenio_avenamiento" class="form-control" id="convenio_avenamiento" accept=".pdf,.doc,.docx" required>
+            <input type="file" name="convenio_avenamiento" class="form-control" id="convenio_avenamiento" accept=".pdf,.doc,.docx">
         </div>
 
         <div class="mb-3">
@@ -39,4 +40,11 @@
 
         <button type="submit" class="btn btn-primary">Finalizar <i class="fas fa-check-circle"></i></button>
     </form>
+</div>
+<div class="form-container alert alert-info d-flex align-items-center mt-4 p-3" style="background-color: #d9edf7; border-left: 5px solid #31708f; color: #31708f;">
+    <i class="fas fa-lightbulb me-2" style="font-size: 24px;"></i>
+    <div>
+        <strong>Guardado Automático:</strong> Haga clic en <b>"Siguiente"</b> y sus datos se guardarán para poder continuar en otro momento.
+    </div>
+</div>
 @endsection

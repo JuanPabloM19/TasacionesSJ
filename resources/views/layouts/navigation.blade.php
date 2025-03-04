@@ -58,7 +58,7 @@
         display: none; /* No mostrar en PC */
         width: 100%;
         height: 60px; /* Aumenta la altura */
-        background: #ff8200;
+        background: #ff6200;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -109,7 +109,7 @@
         position: fixed;
         left: 0;
         top: 0;
-        background: linear-gradient(to bottom, #feb47b, #ff8200);
+        background: #ff6200;
         padding: 20px;
         transition: transform 0.3s ease-in-out;
         box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);

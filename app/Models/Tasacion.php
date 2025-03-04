@@ -9,7 +9,7 @@ class Tasacion extends Model
 {
     use HasFactory;
 
-    protected $table = 'tasacions';
+    protected $table = 'tasaciones';
 
     protected $fillable = [
         'nomenclatura',
@@ -36,4 +36,15 @@ class Tasacion extends Model
         'monto_pagado',
         'estado',
     ];
+
+    public function tasacionJudicial()
+    {
+        return $this->hasOne(TasacionJudicial::class, 'tasacion_id');
+    }
+
+    public function getEstadoJudicialAttribute()
+    {
+        return $this->tasacionJudicial->estado ?? null;
+    }
+
 }

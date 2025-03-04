@@ -33,7 +33,6 @@ Route::middleware('auth')->group(function () {
     // })->name('users.index');
 
     Route::get('/appraisals', [App\Http\Controllers\TasacionesController::class, 'index'])->name('appraisals.index');
-
     Route::get('/appraisals/individualization/{id?}', [TasacionesController::class, 'step1'])->name('appraisals.step1');
     Route::post('/appraisals/individualization/{id?}', [TasacionesController::class, 'step1']);
 
@@ -50,20 +49,30 @@ Route::middleware('auth')->group(function () {
     Route::post('/appraisals/acceptance-of-amount/{id}', [TasacionesController::class, 'step5']);
 
     Route::post('/appraisals/finish', [TasacionesController::class, 'finish'])->name('appraisals.finish');
-
     Route::delete('/appraisals/{id}', [TasacionesController::class, 'destroy'])->name('appraisals.destroy');
-
     Route::get('/appraisals/export', [TasacionesController::class, 'export'])->name('appraisals.export');
-
+    Route::get('appraisals/finalize/{id}', [TasacionesController::class, 'finalizeTasacion'])->name('appraisals.finalize');
+    Route::get('/appraisals/{id}/ir-a-judicial', [TasacionesController::class, 'goToJudicial'])->name('appraisals.goToJudicial');
     Route::get('/appraisals/{id}/updateStatus/{status}', [TasacionesController::class, 'updateStatus'])->name('appraisals.updateStatus');
 
+
     // Rutas para el proceso judicial
-    Route::get('/judicial/judicial-action', [JudicialController::class, 'step6'])->name('judicial.step6');
-    Route::post('/judicial/compensation-amount', [JudicialController::class, 'step7'])->name('judicial.step7');
-    Route::post('/judicial/transfer-of-ownership', [JudicialController::class, 'step8'])->name('judicial.step8');
-    Route::post('/judicial/bulletin', [JudicialController::class, 'step9'])->name('judicial.step9');
-    Route::post('/judicial/observations', [JudicialController::class, 'step10'])->name('judicial.step10');
-    Route::post('/judicial/finish', [JudicialController::class, 'finish'])->name('judicial.finish');
+    Route::get('judicial/judicial-action/{tasacion_id}', [JudicialController::class, 'step6'])->name('judicial.step6');
+    Route::post('/judicial/judicial-action/{tasacion_id}', [JudicialController::class, 'step6']);
+
+    Route::get('judicial/compensation-amount/{tasacion_id}', [JudicialController::class, 'step7'])->name('judicial.step7');
+    Route::post('/judicial/compensation-amount/{tasacion_id}', [JudicialController::class, 'step7']);
+
+    Route::get('judicial/transfer-of-ownership/{tasacion_id}', [JudicialController::class, 'step8'])->name('judicial.step8');
+    Route::post('/judicial/transfer-of-ownership/{tasacion_id}', [JudicialController::class, 'step8']);
+
+    Route::get('judicial/bulletin/{tasacion_id}', [JudicialController::class, 'step9'])->name('judicial.step9');
+    Route::post('/judicial/bulletin/{tasacion_id}', [JudicialController::class, 'step9']);
+
+    Route::get('judicial/observations/{tasacion_id}', [JudicialController::class, 'step10'])->name('judicial.step10');
+    Route::post('/judicial/observations/{tasacion_id}', [JudicialController::class, 'step10']);
+
+    Route::post('/judicial/{tasacion_id}/finish', [JudicialController::class, 'finish'])->name('judicial.finish');
 
     Route::get('/account', function () {
         return view('users.account', ['user' => Auth::user()]);

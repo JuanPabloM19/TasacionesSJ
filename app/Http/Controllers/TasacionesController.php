@@ -12,7 +12,7 @@ class TasacionesController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Tasacion::query();
+        $query = Tasacion::with('tasacionJudicial'); // Carga relación directamente
 
         // Filtrar por nomenclatura si se proporciona
         if ($request->filled('nomenclatura')) {
@@ -24,12 +24,11 @@ class TasacionesController extends Controller
             $query->where('estado', $request->estado);
         }
 
-        // Obtener las tasaciones filtradas
+        // Obtener las tasaciones con sus relaciones cargadas
         $tasaciones = $query->get();
 
         return view('appraisals.index', compact('tasaciones'));
     }
-
 
     public function step1(Request $request, $id = null)
     {
@@ -74,7 +73,7 @@ class TasacionesController extends Controller
             'fecha_iniciacion' => 'required|date',
         ]);
 
-        $tasacion->update($validated);
+        $tasacion->update(array_merge($validated, ['estado' => 'step2']));
 
         return redirect()->route('appraisals.step3', ['id' => $tasacion->id]);
     }
@@ -88,19 +87,21 @@ class TasacionesController extends Controller
         }
 
         $validated = $request->validate([
-            'numero' => 'required|numeric',
-            'fecha' => 'required|date',
+            'numero_ley' => 'required|numeric',
+            'fecha_ley' => 'required|date',
             'boletin_oficial' => 'required|string',
-            'ley_documento' => 'nullable|file|mimes:pdf,doc,docx',
+            'ley_documento' => 'nullable|file|mimes:pdf,doc,docx|max:10240', // max 10MB
         ]);
 
+         // Manejo del archivo si se proporciona
         if ($request->hasFile('ley_documento')) {
             $document = $request->file('ley_documento');
             $filename = uniqid() . '.' . $document->getClientOriginalExtension();
+            // Guardar el archivo en la carpeta 'documents'
             $validated['ley_documento'] = $document->storeAs('documents', $filename);
         }
 
-        $tasacion->update($validated);
+        $tasacion->update(array_merge($validated, ['estado' => 'step3']));
 
         return redirect()->route('appraisals.step4', ['id' => $tasacion->id]);
     }
@@ -116,11 +117,11 @@ class TasacionesController extends Controller
         $validated = $request->validate([
             'numero_exp' => 'required|numeric',
             'monto_acordado' => 'required|numeric',
-            'fecha' => 'required|date',
+            'fecha_notificacion' => 'required|date',
             'acta_numero' => 'required|string',
         ]);
 
-        $tasacion->update($validated);
+        $tasacion->update(array_merge($validated, ['estado' => 'step4']));
 
         return redirect()->route('appraisals.step5', ['id' => $tasacion->id]);
     }
@@ -136,13 +137,20 @@ class TasacionesController extends Controller
         $validated = $request->validate([
             'incremento' => 'required|boolean',
             'aceptacion' => 'required|boolean',
-            'conevenio_avenamiento' => 'required|string',
+            'conevenio_avenamiento' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
             'monto_pagado' => 'required|numeric',
         ]);
 
+        if ($request->hasFile('monto_pagado')) {
+            $document = $request->file('monto_pagado');
+            $filename = uniqid() . '.' . $document->getClientOriginalExtension();
+            // Guardar el archivo en la carpeta 'documents'
+            $validated['monto_pagado'] = $document->storeAs('documents', $filename);
+        }
+
         $tasacion->update(array_merge($validated, ['estado' => 'completed']));
 
-        return redirect()->route('appraisals.index')->with('success', 'Tasación completada');
+        return redirect()->route('appraisals.index')->with('success', 'Tasación completada exitosamente');
     }
 
         public function destroy($id)
@@ -161,4 +169,37 @@ class TasacionesController extends Controller
     {
         return Excel::download(new TasacionesExport($request), 'tasaciones.xlsx');
     }
+
+    public function goToJudicial($id)
+    {
+        $tasacion = Tasacion::findOrFail($id);
+
+        if ($tasacion->estado == 'completed') {
+            // Cambiar estado a judicial
+            $tasacion->estado = 'judicial';
+            $tasacion->save();
+
+            // Redirigir al primer paso de la etapa judicial
+            return redirect()->route('judicial.step6', ['id' => $tasacion->id])->with('success', 'La tasación ha sido enviada a la etapa judicial.');
+        }
+
+        return redirect()->route('appraisals.index')->with('error', 'Esta tasación no está completada y no puede ser enviada a judicial.');
+    }
+
+    public function finalizeTasacion($id)
+    {
+        $tasacion = Tasacion::findOrFail($id);
+
+        if ($tasacion->estado == 'completed') {
+            // Cambiar estado a 'pagada'
+            $tasacion->estado = 'pagada';
+            $tasacion->save();
+
+            // Redirigir a la vista principal con mensaje de éxito
+            return redirect()->route('appraisals.index')->with('success', 'La tasación ha sido finalizada y marcada como pagada.');
+        }
+
+        return redirect()->route('appraisals.index')->with('error', 'Esta tasación no está completada y no puede ser finalizada.');
+    }
+
 }
