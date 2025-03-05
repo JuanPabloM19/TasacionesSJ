@@ -48,8 +48,7 @@ return new class extends Migration
             $table->string('archivo_observaciones')->nullable();
 
             // Estado del proceso judicial
-            $table->enum('estado', ['step6', 'step7', 'step8', 'step9', 'step10', 'completed'])->default('step6');
-
+            $table->string('estado')->default('step6');
             $table->timestamps();
         });
     }

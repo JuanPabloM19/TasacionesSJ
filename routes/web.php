@@ -6,6 +6,9 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\TasacionesController;
 use App\Http\Controllers\JudicialController;
 use App\Http\Controllers\UsuarioController;
+use App\Exports\TasacionesExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -50,7 +53,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/appraisals/finish', [TasacionesController::class, 'finish'])->name('appraisals.finish');
     Route::delete('/appraisals/{id}', [TasacionesController::class, 'destroy'])->name('appraisals.destroy');
-    Route::get('/appraisals/export', [TasacionesController::class, 'export'])->name('appraisals.export');
+    Route::get('appraisals/export', function (Request $request) {return Excel::download(new TasacionesExport($request), 'tasaciones.xlsx');})->name('appraisals.export');
     Route::get('appraisals/finalize/{id}', [TasacionesController::class, 'finalizeTasacion'])->name('appraisals.finalize');
     Route::get('/appraisals/{id}/ir-a-judicial', [TasacionesController::class, 'goToJudicial'])->name('appraisals.goToJudicial');
     Route::get('/appraisals/{id}/updateStatus/{status}', [TasacionesController::class, 'updateStatus'])->name('appraisals.updateStatus');
@@ -73,6 +76,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/judicial/observations/{tasacion_id}', [JudicialController::class, 'step10']);
 
     Route::post('/judicial/{tasacion_id}/finish', [JudicialController::class, 'finish'])->name('judicial.finish');
+    Route::get('/judicial/finalize/{tasacion_id}', [JudicialController::class, 'finalize'])->name('judicial.finalize');
+
 
     Route::get('/account', function () {
         return view('users.account', ['user' => Auth::user()]);

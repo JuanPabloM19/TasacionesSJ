@@ -19,9 +19,19 @@ class TasacionesController extends Controller
             $query->where('nomenclatura', 'LIKE', '%' . $request->nomenclatura . '%');
         }
 
-        // Filtrar por estado si se proporciona
-        if ($request->filled('estado')) {
-            $query->where('estado', $request->estado);
+        // Filtrar por estado (Etapa Administrativa) si se proporciona
+        if ($request->filled('estado_administrativa') && $request->estado_administrativa !== 'no') {
+            $query->where('estado', $request->estado_administrativa);
+        }
+
+        // Filtrar por estado (Etapa Judicial) si se proporciona
+        if ($request->filled('estado_judicial') && $request->estado_judicial !== 'no') {
+            $query->where('estado', $request->estado_judicial);
+        }
+
+        // Filtrar por estado de Pagada si se proporciona
+        if ($request->filled('estado_pagada') && $request->estado_pagada !== 'no') {
+            $query->where('estado', 'pagada');
         }
 
         // Obtener las tasaciones con sus relaciones cargadas

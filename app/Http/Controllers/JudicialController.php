@@ -102,6 +102,10 @@ class JudicialController extends Controller
 
         // Si ya completó el paso, redirigir al siguiente paso
         if ($tasacion->estado == 'step' . $step) {
+            // Si estamos en el último paso (step10), finalizar
+            if ($step == 10) {
+                return $this->finish($tasacion_id);
+            }
             return redirect()->route('judicial.step' . ($step + 1), ['tasacion_id' => $tasacion->id]);
         }
 
@@ -131,7 +135,51 @@ class JudicialController extends Controller
         $tasacion->estado = 'step' . $step;
         $tasacion->save();
 
+        // Si estamos en el último paso, llamamos al método `finish`
+        if ($step == 10) {
+            return $this->finish($tasacion_id);
+        }
+
         // Redirigir al siguiente paso
         return redirect()->route("judicial.step" . ($step + 1), ['tasacion_id' => $tasacion->id]);
     }
+
+    public function finish($tasacion_id)
+    {
+        $tasacion = Tasacion::find($tasacion_id);
+
+        if (!$tasacion) {
+            return redirect()->route('appraisals.index')->with('error', 'Tasación no encontrada.');
+        }
+
+        // Marcar la tasación como finalizada
+        $tasacion->estado = 'completed_judicial';
+        $tasacion->save();
+
+        return redirect()->route('appraisals.index')->with('success', 'El proceso judicial ha sido completado exitosamente.');
+    }
+
+    public function finalize($tasacion_id)
+    {
+        $tasacion = Tasacion::findOrFail($tasacion_id);
+        $tasacionJudicial = TasacionJudicial::where('tasacion_id', $tasacion_id)->first();
+
+        if (!$tasacionJudicial) {
+            return redirect()->route('appraisals.index')->with('error', 'No se encontró la tasación judicial.');
+        }
+
+        if ($tasacionJudicial->estado == 'step10') {
+            $tasacionJudicial->estado = 'pagada';
+            $tasacionJudicial->save();
+
+            // Asegurar que en la vista no se intente calcular un step
+            $tasacion->estado = 'pagada';
+            $tasacion->save();
+
+            return redirect()->route('appraisals.index')->with('success', 'La tasación judicial ha sido finalizada.');
+        }
+
+        return redirect()->route('appraisals.index')->with('error', 'Esta tasación judicial no está en el último paso y no puede ser finalizada.');
+    }
+
 }

@@ -10,7 +10,7 @@
 
     <h2 class="text-center mb-4">Observaciones</h2>
     <div class="form-container">
-    <form method="POST" action="{{ route('judicial.finish', ['tasacion_id' => $judicial->tasacion_id]) }}" enctype="multipart/form-data" class="p-4 shadow rounded bg-light">
+    <form method="POST" action="{{ route('judicial.step10', ['tasacion_id' => $judicial->tasacion_id]) }}" enctype="multipart/form-data" class="p-4 shadow rounded bg-light">
         @csrf
         <div class="mb-3">
             <label for="observaciones_finales" class="form-label">Observaciones:</label>

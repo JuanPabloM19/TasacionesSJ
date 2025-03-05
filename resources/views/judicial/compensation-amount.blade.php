@@ -9,7 +9,7 @@
 
     <h2 class="text-center mb-4">Monto Indemnizatorio a Pagar</h2>
     <div class="form-container">
-    <form method="POST" action="{{ route('judicial.step8', ['tasacion_id' => $judicial->tasacion_id]) }}" class="p-4 shadow rounded bg-light">
+    <form method="POST" action="{{ route('judicial.step7', ['tasacion_id' => $judicial->tasacion_id]) }}" class="p-4 shadow rounded bg-light">
         @csrf
         <div class="mb-3">
             <label for="dictamen_expediente" class="form-label">Dictamen del TTP - Nro Expediente:</label>

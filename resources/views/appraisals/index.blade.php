@@ -68,13 +68,14 @@
                         <td>{{ $tasacion->ubicacion }}</td>
                         <td>{{ $tasacion->nro_plano }}</td>
                         <td>
-                            @if($tasacion->estado_judicial)
-                                @switch($tasacion->estado_judicial)
+                            @if(optional($tasacion->tasacionJudicial)->estado)
+                                @switch(optional($tasacion->tasacionJudicial)->estado)
                                     @case('step6') Actuaciones Judiciales (6) @break
                                     @case('step7') Monto Indemnizatorio a Pagar (7) @break
                                     @case('step8') Transferencia de Dominio (8) @break
                                     @case('step9') Boletín Oficial (9) @break
                                     @case('step10') Judicial (En Proceso) (10) @break
+                                    @case('pagada') <span class="text-success"><i class="fas fa-check-circle"></i> Pagada</span> @break
                                     @default Estado Judicial Desconocido
                                 @endswitch
                             @else
@@ -94,9 +95,9 @@
                             @if($tasacion->estado == 'pagada')
                                 <!-- Sin botones -->
 
-                            @elseif($tasacion->estado_judicial == 'step10')
+                            @elseif(optional($tasacion->tasacionJudicial)->estado == 'step10')
                                 <!-- Judicial en Proceso (step10) -->
-                                <a href="{{ route('appraisals.finalize', ['id' => $tasacion->id]) }}" class="btn btn-success">
+                                <a href="{{ route('judicial.finalize', ['tasacion_id' => $tasacion->id]) }}" class="btn btn-success">
                                     <i class="fas fa-check"></i> Finalizar
                                 </a>
                                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $tasacion->id }}">
@@ -106,7 +107,7 @@
                                     <i class="fas fa-trash"></i> Eliminar
                                 </button>
 
-                            @elseif($tasacion->estado == 'completed' && !$tasacion->estado_judicial)
+                            @elseif($tasacion->estado == 'completed' && !optional($tasacion->tasacionJudicial)->estado)
                                 <!-- Vía Administrativa Completada -->
                                 <a href="{{ route('appraisals.finalize', ['id' => $tasacion->id]) }}" class="btn btn-success">
                                     <i class="fas fa-check"></i> Finalizar
@@ -125,15 +126,13 @@
                                 <!-- Estados intermedios (step1-step5 y step6-step9) -->
                                 @php
                                     $stepNumber = $tasacion->estado_judicial
-                                        ? intval(substr($tasacion->estado_judicial, -1))
-                                        : intval(substr($tasacion->estado, -1));
-                                    $nextStep = $tasacion->estado_judicial
-                                        ? ($stepNumber < 10 ? 'step' . ($stepNumber + 1) : null)
-                                        : ($stepNumber < 5 ? 'step' . ($stepNumber + 1) : null);
+                                    ? intval(filter_var($tasacion->estado_judicial, FILTER_SANITIZE_NUMBER_INT))
+                                    : (is_numeric(substr($tasacion->estado, -1)) ? intval(substr($tasacion->estado, -1)) : null);
+                                    $nextStep = ($stepNumber !== null && $stepNumber < 10) ? 'step' . ($stepNumber + 1) : null;
                                 @endphp
 
                                 @if($nextStep)
-                                    <a href="{{ route($tasacion->estado_judicial ? 'judicial.' . $nextStep : 'appraisals.' . $nextStep, ['tasacion_id' => $tasacion->id]) }}" class="btn btn-warning">
+                                    <a href="{{ route(optional($tasacion->tasacionJudicial)->estado ? 'judicial.' . $nextStep : 'appraisals.' . $nextStep, ['tasacion_id' => $tasacion->id]) }}" class="btn btn-warning">
                                         <i class="fas fa-arrow-right"></i> Continuar
                                     </a>
                                 @endif
@@ -169,7 +168,7 @@
                 <p>Selecciona el paso que deseas editar:</p>
                 <ul class="list-group">
                     <!-- Verificar si está en estado judicial -->
-                    @if($tasacion->estado_judicial && in_array($tasacion->estado_judicial, ['step6', 'step7', 'step8', 'step9', 'step10']))
+                    @if(optional($tasacion->tasacionJudicial)->estado && in_array(optional($tasacion->tasacionJudicial)->estado, ['step6', 'step7', 'step8', 'step9', 'step10']))
                         <!-- Mostrar Steps 6 al 10 si está en estado judicial -->
                         <li class="list-group-item">
                             <a href="{{ route('judicial.step6', ['tasacion_id' => $tasacion->id]) }}" class="btn btn-link custom-link">6: Actuaciones Judiciales</a>
@@ -214,7 +213,7 @@
 </div>
 @endforeach
 
-    <!-- Modal de Exportación -->
+<!-- Modal de Exportación -->
 <div class="modal fade" id="exportModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -230,8 +229,8 @@
                 <label for="fechaHasta">Fecha Hasta:</label>
                 <input type="date" id="fechaHasta" class="form-control mb-3">
 
-                <!-- Selección de Campos -->
-                <label>Seleccione los campos a exportar:</label>
+                <!-- Selección de Campos Administrativos -->
+                <label>Seleccione los campos a exportar (Administrativos):</label>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="nomenclatura" checked>
                     <label class="form-check-label" for="nomenclatura">Nomenclatura</label>
@@ -245,23 +244,208 @@
                     <label class="form-check-label" for="ubicacion">Ubicación</label>
                 </div>
                 <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="propietarios" checked>
+                    <label class="form-check-label" for="propietarios">Propietarios</label>
+                </div>
+                <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="nro_plano" checked>
                     <label class="form-check-label" for="nro_plano">Nro Plano</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="superficie_total" checked>
+                    <label class="form-check-label" for="superficie_total">Superficie Total</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="fraccion_expropiar" checked>
+                    <label class="form-check-label" for="fraccion_expropiar">Fracción a Expropiar</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="nombre_reparticion" checked>
+                    <label class="form-check-label" for="nombre_reparticion">Nombre Repartición</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="expediente_nro" checked>
+                    <label class="form-check-label" for="expediente_nro">Expediente Nro</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="fecha_iniciacion" checked>
+                    <label class="form-check-label" for="fecha_iniciacion">Fecha Iniciación</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="numero_ley" checked>
+                    <label class="form-check-label" for="numero_ley">Numero de Ley</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="fecha_ley" checked>
+                    <label class="form-check-label" for="fecha_ley">Fecha de Ley</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="boletin_oficial" checked>
+                    <label class="form-check-label" for="boletin_oficial">Boletin Oficial</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="numero_exp" checked>
+                    <label class="form-check-label" for="numero_exp">Numero Expediente</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="monto_acordado" checked>
+                    <label class="form-check-label" for="monto_acordado">Monto Acordado</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="fecha_notificacion" checked>
+                    <label class="form-check-label" for="fecha_notificacion">Fecha de Notificacion</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="acta_numero" checked>
+                    <label class="form-check-label" for="acta_numero">Numero de Acta</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="incremento" checked>
+                    <label class="form-check-label" for="incremento">Incremento</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="aceptacion" checked>
+                    <label class="form-check-label" for="aceptacion">Aceptacion</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="monto_pagado" checked>
+                    <label class="form-check-label" for="monto_pagado">Monto Pagado</label>
+                </div>
+
+                <!-- Campos Judiciales -->
+                <label class="mt-3">Seleccione los campos a exportar (Judiciales):</label>
+                {{-- <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="expediente_nro" checked>
+                    <label class="form-check-label" for="expediente_nro">Numero de Expediente</label>
+                </div> --}}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="fecha_inicio" checked>
+                    <label class="form-check-label" for="fecha_inicio">Fecha Inicio Judicial</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="juzgado_interviniente" checked>
+                    <label class="form-check-label" for="juzgado_interviniente">Juzgado Interviniente</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="caratula" checked>
+                    <label class="form-check-label" for="caratula">Carátula</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="boleta_deposito" checked>
+                    <label class="form-check-label" for="boleta_deposito">Boleta Depósito</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="nro_comprobante" checked>
+                    <label class="form-check-label" for="nro_comprobante">Numero de Comprobante</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="monto_depositado" checked>
+                    <label class="form-check-label" for="monto_depositado">Monto Depositado</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="observaciones" checked>
+                    <label class="form-check-label" for="observaciones">Observaciones</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="dictamen_expediente" checked>
+                    <label class="form-check-label" for="dictamen_expediente">Dictamen Expediente</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="dictamen_fecha" checked>
+                    <label class="form-check-label" for="dictamen_fecha">Fecha de Dictamen</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="dictamen_monto" checked>
+                    <label class="form-check-label" for="dictamen_monto">Monto del Dictamen</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="orden_pago_fecha" checked>
+                    <label class="form-check-label" for="orden_pago_fecha">Fecha de Orden de Pago</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="orden_pago_monto" checked>
+                    <label class="form-check-label" for="orden_pago_monto">Monto de Orden de Pago</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="concepto_indemnizacion" checked>
+                    <label class="form-check-label" for="concepto_indemnizacion">Concepto de Indemnizacion</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="dominio_publico" checked>
+                    <label class="form-check-label" for="dominio_publico">Dominio Publico</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="dominio_privado" checked>
+                    <label class="form-check-label" for="dominio_privado">Dominio Privado</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="boletin_numero" checked>
+                    <label class="form-check-label" for="boletin_numero">Numero de Boletin</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="boletin_fecha" checked>
+                    <label class="form-check-label" for="boletin_fecha">Fecha del Boletin</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="observaciones_finales" checked>
+                    <label class="form-check-label" for="observaciones_finales">Observaciones Finales</label>
                 </div>
 
                 <!-- Selección de Estados -->
                 <label class="mt-3">Seleccione los estados de tasaciones:</label>
+
+                <!-- Estado Administrativo (Checkboxs) -->
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="estado_administrativa" checked>
-                    <label class="form-check-label" for="estado_administrativa">Administrativa</label>
+                    <input class="form-check-input" type="checkbox" id="step1" checked>
+                    <label class="form-check-label" for="step1">Individualización de Inmuebles (1)</label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="estado_judicial" checked>
-                    <label class="form-check-label" for="estado_judicial">Judicial</label>
+                    <input class="form-check-input" type="checkbox" id="step2" checked>
+                    <label class="form-check-label" for="step2">Organismo Expropiante (2)</label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="estado_finalizado" checked>
-                    <label class="form-check-label" for="estado_finalizado">Finalizado</label>
+                    <input class="form-check-input" type="checkbox" id="step3" checked>
+                    <label class="form-check-label" for="step3">Ley de Utilidad Pública (3)</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="step4" checked>
+                    <label class="form-check-label" for="step4">Notificación Acto Expropiatorio (4)</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="step5" checked>
+                    <label class="form-check-label" for="step5">Aceptación del Monto (5)</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="completed" checked>
+                    <label class="form-check-label" for="completed">Vía Administrativa Completada</label>
+                </div>
+
+                <!-- Estado Judicial (Checkboxs) -->
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="step6" checked>
+                    <label class="form-check-label" for="step6">Actuaciones Judiciales (6)</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="step7" checked>
+                    <label class="form-check-label" for="step7">Monto Indemnizatorio a Pagar (7)</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="step8" checked>
+                    <label class="form-check-label" for="step8">Transferencia de Dominio (8)</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="step9" checked>
+                    <label class="form-check-label" for="step9">Boletín Oficial (9)</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="step10" checked>
+                    <label class="form-check-label" for="step10">Judicial (En Proceso) (10))</label>
+                </div>
+
+                <!-- Estado de Pagada -->
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="estado_pagada" checked>
+                    <label class="form-check-label" for="estado_pagada">Pagada</label>
                 </div>
             </div>
             <div class="modal-footer">
@@ -273,21 +457,50 @@
 </div>
 
 <script>
-    document.getElementById('exportExcel').addEventListener('click', function() {
-        let params = new URLSearchParams();
+ document.getElementById('exportExcel').addEventListener('click', function() {
+     let params = new URLSearchParams();
 
-        // Capturar valores de los filtros
-        params.append('fechaDesde', document.getElementById('fechaDesde').value);
-        params.append('fechaHasta', document.getElementById('fechaHasta').value);
+     // Capturar valores de los filtros de fecha
+     params.append('fechaDesde', document.getElementById('fechaDesde').value);
+     params.append('fechaHasta', document.getElementById('fechaHasta').value);
 
-        document.querySelectorAll('.form-check-input').forEach((checkbox) => {
-            if (checkbox.checked) {
-                params.append(checkbox.id, '1');
-            }
-        });
+     // Capturar los valores de los checkboxes para campos seleccionados
+     document.querySelectorAll('.form-check-input').forEach((checkbox) => {
+         if (checkbox.checked) {
+             console.log(`Campo seleccionado: ${checkbox.id}`);
+             params.append(checkbox.id, '1');
+         }
+     });
 
-        window.location.href = "{{ route('appraisals.export') }}?" + params.toString();
-    });
+     // Capturar los estados de los pasos seleccionados
+     let estados = [];
+     // Campos administrativos
+     for (let i = 1; i <= 5; i++) {
+         if (document.getElementById(`step${i}`).checked) {
+             estados.push(`step${i}`);
+         }
+     }
+
+     // Campos judiciales
+     for (let i = 6; i <= 10; i++) {
+         if (document.getElementById(`step${i}`).checked) {
+             estados.push(`step${i}`);
+         }
+     }
+
+     // Estado de "Pagada"
+     if (document.getElementById('estado_pagada').checked) {
+         estados.push('pagada');
+     }
+
+     if (estados.length > 0) {
+         params.append('estados', estados.join(','));
+     }
+
+     console.log(params.toString()); // Verificar los parámetros
+     window.location.href = "{{ route('appraisals.export') }}?" + params.toString();
+ });
+
 </script>
 
 <!-- Modal de Búsqueda -->
@@ -320,22 +533,42 @@
             </div>
             <div class="modal-body">
                 <form method="GET" action="{{ route('appraisals.index') }}">
-                    <select class="form-control mb-2" name="estado">
+                    <label for="administrativa">Etapa Administrativa</label>
+                    <select class="form-control mb-2" name="estado_administrativa" id="administrativa">
                         <option value="">Todos los estados</option>
-                        <option value="step1" {{ request('estado') == 'step1' ? 'selected' : '' }}>Individualización de Inmuebles</option>
-                        <option value="step2" {{ request('estado') == 'step2' ? 'selected' : '' }}>Organismo Expropiante</option>
-                        <option value="step3" {{ request('estado') == 'step3' ? 'selected' : '' }}>Ley de Utilidad Pública</option>
-                        <option value="step4" {{ request('estado') == 'step4' ? 'selected' : '' }}>Notificación Acto Expropiatorio</option>
-                        <option value="step5" {{ request('estado') == 'step5' ? 'selected' : '' }}>Aceptación del Monto</option>
-                        <option value="completed" {{ request('estado') == 'completed' ? 'selected' : '' }}>Via Administrativa Completada</option>
+                        <option value="step1" {{ request('estado_administrativa') == 'step1' ? 'selected' : '' }}>Individualización de Inmuebles (1)</option>
+                        <option value="step2" {{ request('estado_administrativa') == 'step2' ? 'selected' : '' }}>Organismo Expropiante (2)</option>
+                        <option value="step3" {{ request('estado_administrativa') == 'step3' ? 'selected' : '' }}>Ley de Utilidad Pública (3)</option>
+                        <option value="step4" {{ request('estado_administrativa') == 'step4' ? 'selected' : '' }}>Notificación Acto Expropiatorio (4)</option>
+                        <option value="step5" {{ request('estado_administrativa') == 'step5' ? 'selected' : '' }}>Aceptación del Monto (5)</option>
+                        <option value="completed" {{ request('estado_administrativa') == 'completed' ? 'selected' : '' }}>Vía Administrativa Completada</option>
+                        <option value="no" {{ request('estado_administrativa') == 'no' ? 'selected' : '' }}>No aplicar filtro</option>
                     </select>
+
+                    <label for="judicial">Etapa Judicial</label>
+                    <select class="form-control mb-2" name="estado_judicial" id="judicial">
+                        <option value="">Todos los estados</option>
+                        <option value="step6" {{ request('estado_judicial') == 'step6' ? 'selected' : '' }}>Actuaciones Judiciales (6)</option>
+                        <option value="step7" {{ request('estado_judicial') == 'step7' ? 'selected' : '' }}>Monto Indemnizatorio a Pagar (7)</option>
+                        <option value="step8" {{ request('estado_judicial') == 'step8' ? 'selected' : '' }}>Transferencia de Dominio (8)</option>
+                        <option value="step9" {{ request('estado_judicial') == 'step9' ? 'selected' : '' }}>Boletín Oficial (9)</option>
+                        <option value="step10" {{ request('estado_judicial') == 'step10' ? 'selected' : '' }}>Judicial (En Proceso) (10)</option>
+                        <option value="no" {{ request('estado_judicial') == 'no' ? 'selected' : '' }}>No aplicar filtro</option>
+                    </select>
+
+                    <label for="pagada">Estado Pagada</label>
+                    <select class="form-control mb-2" name="estado_pagada" id="pagada">
+                        <option value="">Todos los estados</option>
+                        <option value="pagada" {{ request('estado_pagada') == 'pagada' ? 'selected' : '' }}>Pagada</option>
+                        <option value="no" {{ request('estado_pagada') == 'no' ? 'selected' : '' }}>No aplicar filtro</option>
+                    </select>
+
                     <button type="submit" class="btn btn-success w-100">Aplicar Filtro</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
 
 <style>
     body {
