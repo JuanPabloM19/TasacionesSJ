@@ -6,13 +6,13 @@ use App\Models\Tasacion;
 use Illuminate\Http\Request;
 use App\Exports\TasacionesExport;
 use Maatwebsite\Excel\Facades\Excel;
-
+use Illuminate\Support\Facades\Auth;
 
 class TasacionesController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Tasacion::with('tasacionJudicial'); // Carga relación directamente
+        $query = Tasacion::with('tasacionJudicial', 'aprobadoPor'); // Carga relación directamente
 
         // Filtrar por nomenclatura si se proporciona
         if ($request->filled('nomenclatura')) {
@@ -36,6 +36,7 @@ class TasacionesController extends Controller
 
         // Obtener las tasaciones con sus relaciones cargadas
         $tasaciones = $query->get();
+
 
         return view('appraisals.index', compact('tasaciones'));
     }
@@ -212,4 +213,48 @@ class TasacionesController extends Controller
         return redirect()->route('appraisals.index')->with('error', 'Esta tasación no está completada y no puede ser finalizada.');
     }
 
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nomenclatura' => 'required|unique:tasaciones,nomenclatura',
+            // Agrega más validaciones según sea necesario
+        ]);
+
+        $tasacion = new Tasacion($request->all());
+
+        if (auth()->user()->isPasante()) {
+            $tasacion->aprobado = false;
+            $tasacion->aprobado_por = null;
+        } else {
+            $tasacion->aprobado = true;
+            $tasacion->aprobado_por = auth()->id();
+        }
+
+        $tasacion->save();
+
+        return redirect()->route('appraisals.index')->with('success', 'Tasación creada.');
+    }
+
+    public function aprobar($id)
+    {
+        $tasacion = Tasacion::findOrFail($id);
+
+        // Verificar si el usuario tiene permiso
+        if (Auth::user()->role != 'admin' && Auth::user()->role != 'publicador') {
+            abort(403, 'No tienes permisos para aprobar esta tasación.');
+        }
+
+        // Lógica de aprobación
+        $tasacion->aprobado = true;
+        $tasacion->aprobado_por = Auth::user()->id; // Asegúrate de que se está guardando el ID correcto del usuario
+        $tasacion->save();
+
+        return redirect()->route('appraisals.index')->with('success', 'Tasación aprobada con éxito.');
+    }
+
+    public function show($id)
+    {
+        $tasacion = Tasacion::with('tasacionJudicial')->findOrFail($id);
+        return view('appraisals.show', compact('tasacion'));
+    }
 }

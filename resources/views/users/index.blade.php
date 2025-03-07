@@ -22,6 +22,7 @@
                 <th>Dni</th>
                 <th>Telefono</th>
                 <th>Acciones</th>
+                <th>Rol</th>
             </tr>
         </thead>
         <tbody>
@@ -35,6 +36,7 @@
                 <td>{{ $usuario->created_at->format('Y-m-d') }}</td>
                 <td>{{ $usuario->dni }}</td>
                 <td>{{ $usuario->telefono }}</td>
+                <td>{{ ucfirst($usuario->role) }}</td>
                 <td>
                     <button class="btn btn-warning btn-sm action-btn" data-bs-toggle="modal" data-bs-target="#editUserModal-{{ $usuario->id }}">
                         ✏️
@@ -88,6 +90,15 @@
                                     <label class="form-label">Teléfono</label>
                                     <input type="text" class="form-control" name="telefono" value="{{ $usuario->telefono }}">
                                 </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Rol</label>
+                                    <select class="form-control" name="role" required>
+                                        <option value="admin" {{ $usuario->role == 'admin' ? 'selected' : '' }}>Admin</option>
+                                        <option value="publicador" {{ $usuario->role == 'publicador' ? 'selected' : '' }}>Publicador</option>
+                                        <option value="pasante" {{ $usuario->role == 'pasante' ? 'selected' : '' }}>Pasante</option>
+                                    </select>
+                                </div>
+
                                 {{-- <div class="mb-2">
                                     <label class="form-label">Nueva Contraseña</label>
                                     <input type="password" class="form-control" name="password">
@@ -153,6 +164,14 @@
                     <div class="mb-2">
                         <label class="form-label">Contraseña</label>
                         <input type="password" class="form-control" name="password" required>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Rol</label>
+                        <select class="form-control" name="role" required>
+                            <option value="admin">Admin</option>
+                            <option value="publicador">Publicador</option>
+                            <option value="pasante" selected>Pasante</option>
+                        </select>
                     </div>
 
                     <button type="submit" class="btn btn-success w-100">Crear Usuario</button>

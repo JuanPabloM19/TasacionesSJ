@@ -35,6 +35,7 @@ class Tasacion extends Model
         'convenio_avenamiento',
         'monto_pagado',
         'estado',
+        'aprobado',
     ];
 
     public function tasacionJudicial()
@@ -45,6 +46,11 @@ class Tasacion extends Model
     public function getEstadoJudicialAttribute()
     {
         return $this->tasacionJudicial->estado ?? null;
+    }
+
+    public function aprobadoPor()
+    {
+        return $this->belongsTo(User::class, 'aprobado_por');
     }
 
 }

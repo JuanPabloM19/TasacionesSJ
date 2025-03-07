@@ -47,12 +47,4 @@ class TasacionJudicial extends Model {
         return $this->belongsTo(Tasacion::class, 'tasacion_id');
     }
 
-    // protected $appends = ['estado_judicial'];
-
-    // public function getEstadoJudicialAttribute()
-    // {
-    //     return $this->tasacionJudicial ? $this->tasacionJudicial->estado : null;
-    // }
-
-
 }

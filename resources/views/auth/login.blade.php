@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Iniciar Sesión')
+@section('title', 'Tasaciones San Juan Gobierno')
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/styles.css') }}">

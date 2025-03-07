@@ -15,13 +15,14 @@
 <!-- Sidebar (solo vertical en PC) -->
 <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">
-        <a href="{{ route('appraisals.index') }}">
+        <a href="{{ route('welcome') }}">
             <img src="{{ asset('logo.svg') }}" alt="Logo" class="logo">
         </a>
     </div>
     <ul class="sidebar-menu">
-        <li><a href="#"><i class="fas fa-user-shield"></i> Admin</a></li>
-        <li><a href="{{ route('users.index') }}"><i class="fas fa-users"></i> Usuarios</a></li>
+        @if(auth()->user()->isAdmin())
+            <li><a href="{{ route('users.index') }}"><i class="fas fa-users"></i> Usuarios</a></li>
+        @endif
         <li><a href="{{ route('appraisals.index') }}"><i class="fas fa-file-alt"></i> Tasaciones</a></li>
         <li><a href="{{ route('account') }}"><i class="fas fa-user"></i> Cuenta</a></li>
         <li class="nav-item"><a class="nav-link ltn" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión</a></li>

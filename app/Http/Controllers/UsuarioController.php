@@ -25,6 +25,8 @@ class UsuarioController extends Controller
             'apellido' => 'required|string',
             'dni' => 'required|numeric|unique:users,dni',
             'telefono' => 'nullable|string',
+            'role' => 'required|in:admin,publicador,pasante'
+
         ]);
 
         // Creación del usuario
@@ -37,6 +39,8 @@ class UsuarioController extends Controller
             'apellido' => $request->apellido,
             'dni' => $request->dni,
             'telefono' => $request->telefono,
+            'role' => $request->role
+
     ]);
 
         return redirect()->route('users.index')->with('success', 'Usuario agregado correctamente.');
@@ -53,6 +57,8 @@ class UsuarioController extends Controller
         'apellido' => 'required|string',
         'dni' => 'required|numeric|unique:users,dni,' . $id,
         'telefono' => 'nullable|string',
+        'role' => 'required|in:admin,publicador,pasante'
+
     ]);
 
     $usuario->update([
@@ -62,6 +68,7 @@ class UsuarioController extends Controller
         'apellido' => $request->apellido,
         'dni' => $request->dni,
         'telefono' => $request->telefono,
+        'role' => $request->role,
         'password' => $request->password ? Hash::make($request->password) : $usuario->password,
     ]);
 

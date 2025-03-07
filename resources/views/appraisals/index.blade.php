@@ -51,102 +51,128 @@
                     <th>Nro Plano</th>
                     <th>Estado</th>
                     <th>Acciones</th>
+                    <th>Aprobación</th>
                 </tr>
             </thead>
-                @if($tasaciones->isEmpty())
+            @if($tasaciones->isEmpty())
                 <tr>
-                    <td colspan="6" class="text-center text-danger">
+                    <td colspan="7" class="text-center text-danger">
                         No se encontraron tasaciones.
                     </td>
                 </tr>
-                @else
-            <tbody>
-                @forelse($tasaciones as $tasacion)
-                    <tr class="{{ $tasacion->estado == 'pagada' ? 'bg-cg text-white' : '' }}">
-                        <td>{{ $tasacion->nomenclatura }}</td>
-                        <td>{{ $tasacion->inscripcion_dominio }}</td>
-                        <td>{{ $tasacion->ubicacion }}</td>
-                        <td>{{ $tasacion->nro_plano }}</td>
-                        <td>
-                            @if(optional($tasacion->tasacionJudicial)->estado)
-                                @switch(optional($tasacion->tasacionJudicial)->estado)
-                                    @case('step6') Actuaciones Judiciales (6) @break
-                                    @case('step7') Monto Indemnizatorio a Pagar (7) @break
-                                    @case('step8') Transferencia de Dominio (8) @break
-                                    @case('step9') Boletín Oficial (9) @break
-                                    @case('step10') Judicial (En Proceso) (10) @break
-                                    @case('pagada') <span class="text-success"><i class="fas fa-check-circle"></i> Pagada</span> @break
-                                    @default Estado Judicial Desconocido
-                                @endswitch
-                            @else
-                                @switch($tasacion->estado)
-                                    @case('step1') Individualización de Inmuebles (1) @break
-                                    @case('step2') Organismo Expropiante (2) @break
-                                    @case('step3') Ley de Utilidad Pública (3) @break
-                                    @case('step4') Notificación Acto Expropiatorio (4) @break
-                                    @case('step5') Aceptación del Monto (5) @break
-                                    @case('completed') Via Administrativa Completada @break
-                                    @case('pagada') <span class="text-success"><i class="fas fa-check-circle"></i> Pagada</span> @break
-                                    @default Estado Administrativo Desconocido
-                                @endswitch
-                            @endif
-                        </td>
-                        <td>
-                            @if($tasacion->estado == 'pagada')
-                                <!-- Sin botones -->
-
-                            @elseif(optional($tasacion->tasacionJudicial)->estado == 'step10')
-                                <!-- Judicial en Proceso (step10) -->
-                                <a href="{{ route('judicial.finalize', ['tasacion_id' => $tasacion->id]) }}" class="btn btn-success">
-                                    <i class="fas fa-check"></i> Finalizar
+            @else
+                <tbody>
+                    @foreach($tasaciones as $tasacion)
+                        <tr class="{{ $tasacion->estado == 'pagada' ? 'bg-cg text-white' : '' }}">
+                            <td>
+                                <a href="{{ route('appraisals.show', $tasacion->id) }}" class="text-primary" title="Ver detalles">
+                                    <i class="fas fa-eye"></i>
                                 </a>
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $tasacion->id }}">
-                                    <i class="fas fa-edit"></i> Editar
-                                </button>
-                                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $tasacion->id }}">
-                                    <i class="fas fa-trash"></i> Eliminar
-                                </button>
-
-                            @elseif($tasacion->estado == 'completed' && !optional($tasacion->tasacionJudicial)->estado)
-                                <!-- Vía Administrativa Completada -->
-                                <a href="{{ route('appraisals.finalize', ['id' => $tasacion->id]) }}" class="btn btn-success">
-                                    <i class="fas fa-check"></i> Finalizar
-                                </a>
-                                <a href="{{ route('judicial.step6', ['tasacion_id' => $tasacion->id]) }}" class="btn btn-warning">
-                                    <i class="fas fa-gavel"></i> Ir a Judicial
-                                </a>
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $tasacion->id }}">
-                                    <i class="fas fa-edit"></i> Editar
-                                </button>
-                                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $tasacion->id }}">
-                                    <i class="fas fa-trash"></i> Eliminar
-                                </button>
-
-                            @else
-                                <!-- Estados intermedios (step1-step5 y step6-step9) -->
-                                @php
-                                    $stepNumber = $tasacion->estado_judicial
-                                    ? intval(filter_var($tasacion->estado_judicial, FILTER_SANITIZE_NUMBER_INT))
-                                    : (is_numeric(substr($tasacion->estado, -1)) ? intval(substr($tasacion->estado, -1)) : null);
-                                    $nextStep = ($stepNumber !== null && $stepNumber < 10) ? 'step' . ($stepNumber + 1) : null;
-                                @endphp
-
-                                @if($nextStep)
-                                    <a href="{{ route(optional($tasacion->tasacionJudicial)->estado ? 'judicial.' . $nextStep : 'appraisals.' . $nextStep, ['tasacion_id' => $tasacion->id]) }}" class="btn btn-warning">
-                                        <i class="fas fa-arrow-right"></i> Continuar
-                                    </a>
+                                {{ $tasacion->nomenclatura }}
+                            </td>
+                            <td>{{ $tasacion->inscripcion_dominio }}</td>
+                            <td>{{ $tasacion->ubicacion }}</td>
+                            <td>{{ $tasacion->nro_plano }}</td>
+                            <td>
+                                @if(optional($tasacion->tasacionJudicial)->estado)
+                                    @switch(optional($tasacion->tasacionJudicial)->estado)
+                                        @case('step6') Actuaciones Judiciales (6) @break
+                                        @case('step7') Monto Indemnizatorio a Pagar (7) @break
+                                        @case('step8') Transferencia de Dominio (8) @break
+                                        @case('step9') Boletín Oficial (9) @break
+                                        @case('step10') Judicial (En Proceso) (10) @break
+                                        @case('pagada') <span class="text-success"><i class="fas fa-check-circle"></i> Pagada</span> @break
+                                        @default Estado Judicial Desconocido
+                                    @endswitch
+                                @else
+                                    @switch($tasacion->estado)
+                                        @case('step1') Individualización de Inmuebles (1) @break
+                                        @case('step2') Organismo Expropiante (2) @break
+                                        @case('step3') Ley de Utilidad Pública (3) @break
+                                        @case('step4') Notificación Acto Expropiatorio (4) @break
+                                        @case('step5') Aceptación del Monto (5) @break
+                                        @case('completed') Vía Administrativa Completada @break
+                                        @case('pagada') <span class="text-success"><i class="fas fa-check-circle"></i> Pagada</span> @break
+                                        @default Estado Administrativo Desconocido
+                                    @endswitch
                                 @endif
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $tasacion->id }}">
-                                    <i class="fas fa-edit"></i> Editar
-                                </button>
-                                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $tasacion->id }}">
-                                    <i class="fas fa-trash"></i> Eliminar
-                                </button>
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    @if($tasacion->estado == 'pagada')
+                                        <!-- Sin botones -->
+                                    @elseif(optional($tasacion->tasacionJudicial)->estado == 'step10')
+                                        <!-- Judicial en Proceso (step10) -->
+                                        <a href="{{ route('judicial.finalize', ['tasacion_id' => $tasacion->id]) }}" class="btn btn-success mb-1 mt-1">
+                                            <i class="fas fa-check"></i> Finalizar
+                                        </a>
+                                        <button class="btn btn-primary mb-1 mt-1" data-bs-toggle="modal" data-bs-target="#editModal{{ $tasacion->id }}">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <button class="btn btn-danger mb-1 mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $tasacion->id }}">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    @elseif($tasacion->estado == 'completed' && !optional($tasacion->tasacionJudicial)->estado)
+                                        <!-- Vía Administrativa Completada -->
+                                        <a href="{{ route('appraisals.finalize', ['id' => $tasacion->id]) }}" class="btn btn-success mb-1 mt-1">
+                                            <i class="fas fa-check"></i> Finalizar
+                                        </a>
+                                        <a href="{{ route('judicial.step6', ['tasacion_id' => $tasacion->id]) }}" class="btn btn-warning mb-1 mt-1">
+                                            <i class="fas fa-gavel"></i> Ir a Judicial
+                                        </a>
+                                        <button class="btn btn-primary mb-1 mt-1" data-bs-toggle="modal" data-bs-target="#editModal{{ $tasacion->id }}">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <button class="btn btn-danger mb-1 mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $tasacion->id }}">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    @else
+                                        <!-- Estados intermedios (step1-step5 y step6-step9) -->
+                                        @php
+                                            $stepNumber = $tasacion->estado_judicial
+                                            ? intval(filter_var($tasacion->estado_judicial, FILTER_SANITIZE_NUMBER_INT))
+                                            : (is_numeric(substr($tasacion->estado, -1)) ? intval(substr($tasacion->estado, -1)) : null);
+                                            $nextStep = ($stepNumber !== null && $stepNumber < 10) ? 'step' . ($stepNumber + 1) : null;
+                                        @endphp
+
+                                        @if($nextStep)
+                                            <a href="{{ route(optional($tasacion->tasacionJudicial)->estado ? 'judicial.' . $nextStep : 'appraisals.' . $nextStep, ['tasacion_id' => $tasacion->id]) }}" class="btn btn-warning mb-1 mt-1">
+                                                <i class="fas fa-arrow-right"></i> Continuar
+                                            </a>
+                                        @endif
+                                        <button class="btn btn-primary mb-1 mt-1" data-bs-toggle="modal" data-bs-target="#editModal{{ $tasacion->id }}">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <button class="btn btn-danger mb-1 mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $tasacion->id }}">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    @endif
+                                </div>
+                            </td>
+                            <td>
+                                @if($tasacion->estado == 'pendiente')
+                                    <span class="badge bg-secondary mb-1 mt-1">Pendiente de Aprobación</span>
+                                @else
+                                    <div class="approval mb-1 mt-1">
+                                        @if($tasacion->aprobado)
+                                            <span class="badge bg-success mb-1 mt-1">Aprobado</span>
+                                            <small>por {{ $tasacion->aprobadoPor ? $tasacion->aprobadoPor->name : 'Desconocido' }}</small>
+                                            @else
+                                            <span class="badge bg-warning mb-1 mt-1">Pendiente</span>
+                                            @if(Auth::user()->role == 'admin' || Auth::user()->role == 'publicador')
+                                                <form method="POST" action="{{ route('appraisals.aprobar', $tasacion->id) }}">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit" class="btn btn-success mb-1 mt-1"><i class="fas fa-check"></i> Aprobar</button>
+                                                </form>
+                                            @endif
+                                        @endif
+                                    </div>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
             @endif
         </table>
     </div>
@@ -633,6 +659,11 @@
         color: #ff6200; /* Cambiar color al pasar el mouse (puedes usar otro color) */
         text-decoration: none; /* Subrayado al pasar el mouse, solo para darle un toque visual */
     }
+
+    /* .actions{
+        padding-top: 5px;
+        padding-bottom: 5px;
+    } */
 
 </style>
 @endsection

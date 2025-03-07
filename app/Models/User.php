@@ -25,7 +25,8 @@ class User extends Authenticatable
         'nombre',     // Nuevo campo
         'apellido',   // Nuevo campo
         'dni',        // Nuevo campo
-        'telefono',   // Nuevo campo
+        'telefono',
+        'role',   // Nuevo campo
     ];
 
     /**
@@ -46,4 +47,17 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // Métodos para verificar roles
+    public function isAdmin() {
+        return $this->role === 'admin';
+    }
+
+    public function isPublicador() {
+        return $this->role === 'publicador';
+    }
+
+    public function isPasante() {
+        return $this->role === 'pasante';
+    }
 }
