@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Exports\TasacionesExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class TasacionesController extends Controller
 {
@@ -50,16 +51,24 @@ class TasacionesController extends Controller
         }
 
         $validated = $request->validate([
-            'nomenclatura' => 'required|unique:tasaciones,nomenclatura',
-            'inscripcion_dominio' => 'required|string',
-            'ubicacion' => 'required|string',
-            'propietarios' => 'required|string',
-            'nro_plano' => 'required|string',
-            'superficie_total' => 'required|numeric',
-            'fraccion_expropiar' => 'required|numeric',
+            'nomenclatura' => ['required', 'digits:15', 'unique:tasaciones,nomenclatura'],
+            'inscripcion_dominio' => ['required', 'max:200'],
+            'ubicacion' => ['required', 'max:200'],
+            'propietarios' => ['required', 'max:200'],
+            'nro_plano' => ['required', 'regex:/^\d{2}\/\d{5}\/\d{4}$/'],
+            'superficie_total' => ['required', 'numeric'],
+            'unidad_superficie' => ['required', 'in:m2,ha'],
+            'fraccion_expropiar' => ['required', 'max:200'],
         ]);
 
-        // $tasacion = Tasacion::create(array_merge($validated, ['estado' => 'step1']));
+        // Validación extra: los primeros dos dígitos deben coincidir
+        $nomenclatura_prefix = substr($validated['nomenclatura'], 0, 2);
+        $nro_plano_prefix = substr($validated['nro_plano'], 0, 2);
+
+        if ($nomenclatura_prefix !== $nro_plano_prefix) {
+            return redirect()->back()->withErrors(['nro_plano' => 'Los dos primeros dígitos de la nomenclatura y del número de plano deben coincidir.'])
+                ->withInput();
+        }
 
         if ($id) {
             $tasacion->update($validated);
@@ -69,7 +78,6 @@ class TasacionesController extends Controller
 
         return redirect()->route('appraisals.step2', ['id' =>  $tasacion->id]);
     }
-
     public function step2(Request $request, $id)
     {
         $tasacion = Tasacion::findOrFail($id);
@@ -79,8 +87,8 @@ class TasacionesController extends Controller
         }
 
         $validated = $request->validate([
-            'nombre_reparticion' => 'required|string',
-            'expediente_nro' => 'required|numeric',
+            'nombre_reparticion' => ['required', 'max:200'],
+            'expediente_nro' => ['required', 'regex:/^\d{3}-\d{5}-\d{4}$/'],
             'fecha_iniciacion' => 'required|date',
         ]);
 
@@ -98,18 +106,29 @@ class TasacionesController extends Controller
         }
 
         $validated = $request->validate([
-            'numero_ley' => 'required|numeric',
+            'numero_ley' => 'required|string|max:200',
             'fecha_ley' => 'required|date',
-            'boletin_oficial' => 'required|string',
-            'ley_documento' => 'nullable|file|mimes:pdf,doc,docx|max:10240', // max 10MB
+            'boletin_oficial' => 'nullable|string',
+            'boletin_oficial_archivo' => 'nullable|file|mimes:pdf,doc,docx|max:10240', // Máx. 10MB
+            'ley_documento' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
         ]);
 
-         // Manejo del archivo si se proporciona
+        // Manejo del archivo del boletín oficial
+        if ($request->hasFile('boletin_oficial_archivo')) {
+            $boletin = $request->file('boletin_oficial_archivo');
+            $boletin_filename = uniqid() . '.' . $boletin->getClientOriginalExtension();
+            // Usar el disco 'public' para guardar el archivo en 'public/documents'
+            $validated['boletin_oficial_archivo'] = $boletin->storeAs('documents', $boletin_filename, 'public');
+            // Si se sube archivo, se borra el campo de texto
+            $validated['boletin_oficial'] = null;
+        }
+
+        // Manejo del archivo si se proporciona
         if ($request->hasFile('ley_documento')) {
             $document = $request->file('ley_documento');
             $filename = uniqid() . '.' . $document->getClientOriginalExtension();
-            // Guardar el archivo en la carpeta 'documents'
-            $validated['ley_documento'] = $document->storeAs('documents', $filename);
+            // Usar el disco 'public' para guardar el archivo en 'public/documents'
+            $validated['ley_documento'] = $document->storeAs('documents', $filename, 'public');
         }
 
         $tasacion->update(array_merge($validated, ['estado' => 'step3']));
@@ -126,11 +145,21 @@ class TasacionesController extends Controller
         }
 
         $validated = $request->validate([
-            'numero_exp' => 'required|numeric',
+            'numero_exp' => ['required', 'regex:/^\d{3}-\d{5}-\d{4}$/'],
             'monto_acordado' => 'required|numeric',
             'fecha_notificacion' => 'required|date',
-            'acta_numero' => 'required|string',
+            'acta_numero' => 'nullable|string',
+            'acta_documento' => 'nullable|file|mimes:pdf,doc,docx|max:10240', // Máx. 10MB
         ]);
+
+        // Guardar el archivo del acta si se sube uno
+        if ($request->hasFile('acta_documento')) {
+            $acta = $request->file('acta_documento');
+            $acta_filename = uniqid() . '.' . $acta->getClientOriginalExtension();
+            $validated['acta_documento'] = $acta->storeAs('public/documents', $acta_filename);
+            // Si se sube archivo, se borra el campo de texto
+            $validated['acta_numero'] = null;
+        }
 
         $tasacion->update(array_merge($validated, ['estado' => 'step4']));
 
@@ -156,7 +185,7 @@ class TasacionesController extends Controller
             $document = $request->file('monto_pagado');
             $filename = uniqid() . '.' . $document->getClientOriginalExtension();
             // Guardar el archivo en la carpeta 'documents'
-            $validated['monto_pagado'] = $document->storeAs('documents', $filename);
+            $validated['monto_pagado'] = $document->storeAs('public/documents', $filename);
         }
 
         $tasacion->update(array_merge($validated, ['estado' => 'completed']));
@@ -256,5 +285,18 @@ class TasacionesController extends Controller
     {
         $tasacion = Tasacion::with('tasacionJudicial')->findOrFail($id);
         return view('appraisals.show', compact('tasacion'));
+    }
+
+    public function downloadDocument($filename)
+    {
+        // Reemplaza 'private/documents' por la ruta correcta en tu sistema
+        $path = storage_path('app/private/documents/' . $filename);
+
+        // Verifica si el archivo existe
+        if (file_exists($path)) {
+            return response()->download($path);
+        }
+
+        abort(404, 'Archivo no encontrado');
     }
 }

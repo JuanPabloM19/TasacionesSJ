@@ -6,7 +6,6 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\TasacionesController;
 use App\Http\Controllers\JudicialController;
 use App\Http\Controllers\UsuarioController;
-use App\Exports\TasacionesExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +47,7 @@ Route::middleware([\App\Http\Middleware\RoleMiddleware::class.':admin,publicador
     // })->name('welcome');
 
     Route::get('/appraisals/{id}', [TasacionesController::class, 'show'])->name('appraisals.show');
+    Route::get('/download/{filename}', [TasacionesController::class, 'downloadDocument'])->name('download.document');
 
     Route::get('/appraisals', [App\Http\Controllers\TasacionesController::class, 'index'])->name('appraisals.index');
     Route::get('/appraisals/individualization/{id?}', [TasacionesController::class, 'step1'])->name('appraisals.step1');
@@ -67,7 +67,7 @@ Route::middleware([\App\Http\Middleware\RoleMiddleware::class.':admin,publicador
 
     Route::post('/appraisals/finish', [TasacionesController::class, 'finish'])->name('appraisals.finish');
     Route::delete('/appraisals/{id}', [TasacionesController::class, 'destroy'])->name('appraisals.destroy');
-    Route::get('appraisals/export', function (Request $request) {return Excel::download(new TasacionesExport($request), 'tasaciones.xlsx');})->name('appraisals.export');
+    Route::post('appraisals/export', [TasacionesController::class, 'export'])->name('appraisals.export');
     Route::get('appraisals/finalize/{id}', [TasacionesController::class, 'finalizeTasacion'])->name('appraisals.finalize');
     Route::get('/appraisals/{id}/ir-a-judicial', [TasacionesController::class, 'goToJudicial'])->name('appraisals.goToJudicial');
     Route::get('/appraisals/{id}/updateStatus/{status}', [TasacionesController::class, 'updateStatus'])->name('appraisals.updateStatus');

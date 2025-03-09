@@ -15,12 +15,17 @@
         @csrf
         <div class="mb-3">
             <label for="nombre_reparticion" class="form-label">Nombre o Repartición:</label>
-            <input type="text" name="nombre_reparticion" class="form-control" id="nombre_reparticion" value="{{ old('nombre_reparticion', $tasacion->nombre_reparticion) }}" required>
+            <input type="text" name="nombre_reparticion" class="form-control" id="nombre_reparticion"
+                   value="{{ old('nombre_reparticion', $tasacion->nombre_reparticion) }}"
+                   maxlength="200" required>
         </div>
 
         <div class="mb-3">
-            <label for="expediente_nro" class="form-label">Expediente Nro:</label>
-            <input type="number" name="expediente_nro" class="form-control" id="expediente_nro" value="{{ old('expediente_nro', $tasacion->expediente_nro) }}" required>
+            <label for="expediente_nro" class="form-label">Expediente Nro (000-55500-0000):</label>
+            <input type="text" name="expediente_nro" class="form-control" id="expediente_nro"
+                   value="{{ old('expediente_nro', $tasacion->expediente_nro) }}"
+                   pattern="\d{3}-\d{5}-\d{4}"
+                   required>
         </div>
 
         <div class="mb-3">

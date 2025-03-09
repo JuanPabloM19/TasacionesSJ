@@ -72,10 +72,18 @@
             <p><strong>Fecha de Ley:</strong> {{ $tasacion->fecha_ley }}</p>
             @endif
             @if($tasacion->boletin_oficial)
-            <p><strong>Boletín Oficial:</strong> {{ $tasacion->boletin_oficial }}</p>
+                <p><strong>Boletin Oficial:</strong>
+                    <a href="{{ asset('storage/'.$tasacion->boletin_oficial) }}" class="btn btn-primary btn-sm" target="_blank">
+                        Descargar
+                    </a>
+                </p>
             @endif
             @if($tasacion->ley_documento)
-            <p><strong>Documento de Ley:</strong> {{ $tasacion->ley_documento }}</p>
+                <p><strong>Documento de Ley:</strong>
+                    <a href="{{ asset('storage/'.$tasacion->ley_documento) }}" class="btn btn-primary btn-sm" target="_blank">
+                        Descargar
+                    </a>
+                </p>
             @endif
         </div>
     </div>
@@ -118,7 +126,11 @@
             <p><strong>Aceptacion:</strong> {{ $tasacion->aceptacion }}</p>
             @endif
             @if($tasacion->convenio_avenamiento)
-            <p><strong>Convenio de avenamiento:</strong> {{ $tasacion->convenio_avenamiento }}</p>
+                <p><strong>Convenio de avenamiento:</strong>
+                    <a href="{{ asset('storage/'.$tasacion->convenio_avenamiento) }}" class="btn btn-primary btn-sm" target="_blank">
+                        Descargar
+                    </a>
+                </p>
             @endif
             @if($tasacion->monto_pagado)
             <p><strong>Monto pagado:</strong> {{ $tasacion->monto_pagado }}</p>
@@ -150,7 +162,11 @@
         <p><strong>Carátula:</strong> {{ $tasacion->tasacionJudicial->caratula }}</p>
         @endif
         @if($tasacion->tasacionJudicial->boleta_deposito)
-        <p><strong>Boleta de deposito:</strong> {{ $tasacion->tasacionJudicial->boleta_deposito }}</p>
+            <p><strong>Boleta de Depósito:</strong>
+                <a href="{{ asset('storage/'.$tasacion->tasacionJudicial->boleta_deposito) }}" class="btn btn-primary btn-sm" target="_blank">
+                    Descargar
+                </a>
+            </p>
         @endif
         @if($tasacion->tasacionJudicial->nro_comprobante)
         <p><strong>Numero de comprobante:</strong> {{ $tasacion->tasacionJudicial->nro_comprobante }}</p>
@@ -205,10 +221,18 @@
     </div>
     <div class="card-body">
         @if($tasacion->tasacionJudicial->dominio_publico)
-        <p><strong>Dominio Público:</strong> {{ $tasacion->tasacionJudicial->dominio_publico }}</p>
+            <p><strong>Dominio Publico:</strong>
+                <a href="{{ asset('storage/'.$tasacion->tasacionJudicial->dominio_publico) }}" class="btn btn-primary btn-sm" target="_blank">
+                    Descargar
+                </a>
+            </p>
         @endif
         @if($tasacion->tasacionJudicial->dominio_privado)
-        <p><strong>Dominio Privado:</strong> {{ $tasacion->tasacionJudicial->dominio_privado }}</p>
+            <p><strong>Dominio Privado:</strong>
+                <a href="{{ asset('storage/'.$tasacion->tasacionJudicial->dominio_privado) }}" class="btn btn-primary btn-sm" target="_blank">
+                    Descargar
+                </a>
+            </p>
         @endif
     </div>
 </div>
@@ -227,6 +251,13 @@
         @if($tasacion->tasacionJudicial->boletin_fecha)
         <p><strong>Fecha del Boletín:</strong> {{ $tasacion->tasacionJudicial->boletin_fecha }}</p>
         @endif
+        @if($tasacion->tasacionJudicial->boletin_archivo)
+            <p><strong>Archivo de la Boleta:</strong>
+                <a href="{{ asset('storage/'.$tasacion->tasacionJudicial->boletin_archivo) }}" class="btn btn-primary btn-sm" target="_blank">
+                    Descargar
+                </a>
+            </p>
+        @endif
     </div>
 </div>
 @endif
@@ -238,13 +269,20 @@
         Observaciones Finales (10)
     </div>
     <div class="card-body">
-        <p><strong>Observaciones:</strong> {{ $tasacion->tasacionJudicial->observaciones_finales }}</p>
+        @if($tasacion->tasacionJudicial->observaciones_finales)
+            <p><strong>Observaciones:</strong> {{ $tasacion->tasacionJudicial->observaciones_finales }}</p>
+        @endif
+        @if($tasacion->tasacionJudicial->archivo_observaciones)
+            <p><strong>Archivo de Observaciones:</strong>
+                <a href="{{ asset('storage/'.$tasacion->tasacionJudicial->archivo_observaciones) }}" class="btn btn-primary btn-sm" target="_blank">
+                    Descargar
+                </a>
+            </p>
+        @endif
     </div>
 </div>
 @endif
-
 @endif
-
 
 </div>
 @endsection

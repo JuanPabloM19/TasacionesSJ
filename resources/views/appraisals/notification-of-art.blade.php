@@ -14,7 +14,11 @@
         @csrf
         <div class="mb-3">
             <label for="numero_exp" class="form-label">Número Expediente:</label>
-            <input type="number" name="numero_exp" class="form-control" id="numero_exp" value="{{ old('numero_exp', $tasacion->numero_exp) }}" required>
+            <input type="text" name="numero_exp" class="form-control" id="numero_exp"
+                   value="{{ old('numero_exp', $tasacion->numero_exp) }}"
+                   pattern="\d{3}-\d{5}-\d{4}"
+                   placeholder="Ej: 000-55500-0000"
+                   required>
         </div>
 
         <div class="mb-3">
@@ -29,7 +33,12 @@
 
         <div class="mb-3">
             <label for="acta_numero" class="form-label">Acta Número:</label>
-            <input type="text" name="acta_numero" class="form-control" id="acta_numero" value="{{ old('acta_numero', $tasacion->acta_numero) }}" required>
+            <input type="text" name="acta_numero" class="form-control mb-2" id="acta_numero"
+                   value="{{ old('acta_numero', $tasacion->acta_numero) }}"
+                   placeholder="Ingrese el número del acta o suba un archivo">
+
+            <input type="file" name="acta_documento" class="form-control"
+                   id="acta_documento" accept=".pdf,.doc,.docx">
         </div>
 
         <button type="submit" class="btn btn-primary">Siguiente <i class="fas fa-arrow-right"></i></button>

@@ -13,8 +13,11 @@
         <form method="POST" action="{{ route('judicial.step6', ['tasacion_id' => $judicial->tasacion_id]) }}" enctype="multipart/form-data" class="p-4 shadow rounded bg-light">
             @csrf
         <div class="mb-3">
-            <label for="expediente_nro" class="form-label">Expediente Nro:</label>
-            <input type="text" name="expediente_nro" class="form-control" id="expediente_nro" value="{{ old('expediente_nro', $judicial->expediente_nro) }}" required>
+            <label for="expediente_nro" class="form-label">Expediente Nro (000-55500-0000):</label>
+            <input type="text" name="expediente_nro" class="form-control" id="expediente_nro"
+                   value="{{ old('expediente_nro', $judicial->expediente_nro) }}"
+                   pattern="\d{3}-\d{5}-\d{4}"
+                   required>
         </div>
 
         <div class="mb-3">
@@ -24,18 +27,18 @@
 
         <div class="mb-3">
             <label for="juzgado_interviniente" class="form-label">Juzgado Interviniente:</label>
-            <input type="text" name="juzgado_interviniente" class="form-control" id="juzgado_interviniente" value="{{ old('juzgado_interviniente', $judicial->juzgado_interviniente) }}" required>
+            <input type="text" name="juzgado_interviniente" class="form-control" id="juzgado_interviniente" value="{{ old('juzgado_interviniente', $judicial->juzgado_interviniente) }}" maxlength="200" required>
         </div>
 
         <div class="mb-3">
             <label for="caratula" class="form-label">Carátula:</label>
-            <input type="text" name="caratula" class="form-control" id="caratula" value="{{ old('caratula', $judicial->caratula) }}" required>
+            <input type="text" name="caratula" class="form-control" id="caratula" value="{{ old('caratula', $judicial->caratula) }}" maxlength="200" required>
         </div>
 
         <div class="mb-3">
             <label for="boleta_deposito" class="form-label">Boleta de Depósito Judicial:</label>
             <input type="file" name="boleta_deposito" class="form-control" id="boleta_deposito" value="{{ old('boleta_deposito', $judicial->boleta_deposito) }}" >
-            <input type="text" name="nro_comprobante" class="form-control mt-2" id="nro_comprobante" value="{{ old('nro_comprobante', $judicial->nro_comprobante) }}" placeholder="Número de Comprobante" >
+            <input type="text" name="nro_comprobante" class="form-control mt-2" id="nro_comprobante" value="{{ old('nro_comprobante', $judicial->nro_comprobante) }}" maxlength="200" placeholder="Número de Comprobante" >
         </div>
 
         <div class="mb-3">

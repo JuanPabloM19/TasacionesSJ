@@ -176,7 +176,7 @@
             @endif
         </table>
     </div>
-    <form method="GET" action="{{ route('appraisals.step1') }}">
+    <form method="GET" action="{{ route('appraisals.step1', ['id' => 0]) }}">
         <button type="submit" class="btn btn-success add-btn">Agregar Tasación</button>
     </form>
 </div>
@@ -484,48 +484,29 @@
 
 <script>
  document.getElementById('exportExcel').addEventListener('click', function() {
-     let params = new URLSearchParams();
+    let params = new URLSearchParams();
 
-     // Capturar valores de los filtros de fecha
-     params.append('fechaDesde', document.getElementById('fechaDesde').value);
-     params.append('fechaHasta', document.getElementById('fechaHasta').value);
+    params.append('_token', '{{ csrf_token() }}'); // Agrega el token CSRF
 
-     // Capturar los valores de los checkboxes para campos seleccionados
-     document.querySelectorAll('.form-check-input').forEach((checkbox) => {
-         if (checkbox.checked) {
-             console.log(`Campo seleccionado: ${checkbox.id}`);
-             params.append(checkbox.id, '1');
-         }
-     });
+    document.querySelectorAll('.form-check-input').forEach((checkbox) => {
+        if (checkbox.checked) {
+            params.append(checkbox.id, '1');
+        }
+    });
 
-     // Capturar los estados de los pasos seleccionados
-     let estados = [];
-     // Campos administrativos
-     for (let i = 1; i <= 5; i++) {
-         if (document.getElementById(`step${i}`).checked) {
-             estados.push(`step${i}`);
-         }
-     }
+    let form = document.createElement('form');
+    form.method = 'POST';
+    form.action = "{{ route('appraisals.export') }}";
 
-     // Campos judiciales
-     for (let i = 6; i <= 10; i++) {
-         if (document.getElementById(`step${i}`).checked) {
-             estados.push(`step${i}`);
-         }
-     }
+    let input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = '_token';
+    input.value = '{{ csrf_token() }}';
+    form.appendChild(input);
 
-     // Estado de "Pagada"
-     if (document.getElementById('estado_pagada').checked) {
-         estados.push('pagada');
-     }
-
-     if (estados.length > 0) {
-         params.append('estados', estados.join(','));
-     }
-
-     console.log(params.toString()); // Verificar los parámetros
-     window.location.href = "{{ route('appraisals.export') }}?" + params.toString();
- });
+    document.body.appendChild(form);
+    form.submit();
+});
 
 </script>
 

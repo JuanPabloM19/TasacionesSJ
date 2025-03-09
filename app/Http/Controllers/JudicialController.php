@@ -28,12 +28,12 @@ class JudicialController extends Controller
         }
 
         $validated = $request->validate([
-            'expediente_nro' => 'required|string',
+            'expediente_nro' => ['required', 'regex:/^\d{3}-\d{5}-\d{4}$/'],
             'fecha_inicio' => 'required|date',
-            'juzgado_interviniente' => 'required|string',
-            'caratula' => 'required|string',
+            'juzgado_interviniente' => ['required','string','max:200'],
+            'caratula' => ['required','string','max:200'],
             'boleta_deposito' => 'nullable|file|mimes:pdf,jpg,png',
-            'nro_comprobante' => 'nullable|string',
+            'nro_comprobante' => ['nullable','string','max:200'],
             'monto_depositado' => 'required|numeric',
             'observaciones' => 'nullable|string',
         ]);
@@ -65,8 +65,18 @@ class JudicialController extends Controller
             'orden_pago_fecha' => 'required|date',
             'orden_pago_monto' => 'required|numeric',
             'instrumento_legal' => 'required|string',
+            'instrumento_legal_pdf' => 'nullable|file|mimes:pdf|max:10240', // Máx. 10MB
             'concepto_indemnizacion' => 'nullable|string',
-        ]);
+        ], function ($judicial, $validated) use ($request) {
+            if ($request->hasFile('instrumento_legal_pdf')) {
+                $pdf = $request->file('instrumento_legal_pdf');
+                $pdf_filename = uniqid() . '.' . $pdf->getClientOriginalExtension();
+                $validated['instrumento_legal_pdf'] = $pdf->storeAs('documents', $pdf_filename);
+                // Si se sube archivo, se borra el campo de texto
+                $validated['instrumento_legal'] = null;
+            }
+            $judicial->update($validated);
+        });
     }
 
     public function step8(Request $request, $tasacion_id)
@@ -74,7 +84,21 @@ class JudicialController extends Controller
         return $this->updateStep($request, $tasacion_id, 8, 'transfer-of-ownership', [
             'dominio_publico' => 'required|string',
             'dominio_privado' => 'required|string',
-        ]);
+        ], function ($judicial, $validated) use ($request) {
+            if ($request->hasFile('dominio_publico_pdf')) {
+                $pdf = $request->file('dominio_publico_pdf');
+                $pdf_filename = uniqid() . '.' . $pdf->getClientOriginalExtension();
+                $validated['dominio_publico_pdf'] = $pdf->storeAs('documents', $pdf_filename);
+                $validated['dominio_publico'] = null;
+            }
+            if ($request->hasFile('dominio_privado_pdf')) {
+                $pdf = $request->file('dominio_privado_pdf');
+                $pdf_filename = uniqid() . '.' . $pdf->getClientOriginalExtension();
+                $validated['dominio_privado_pdf'] = $pdf->storeAs('documents', $pdf_filename);
+                $validated['dominio_privado'] = null;
+            }
+            $judicial->update($validated);
+        });
     }
 
     public function step9(Request $request, $tasacion_id)
@@ -95,7 +119,7 @@ class JudicialController extends Controller
     }
 
     // Método para actualizar cualquier paso judicial
-    public function updateStep(Request $request, $tasacion_id, $step, $view, $rules)
+    public function updateStep(Request $request, $tasacion_id, $step, $view, $rules, $callback = null)
     {
         $tasacion = Tasacion::find($tasacion_id);
         $judicial = $this->getJudicialTasacion($tasacion_id);
@@ -114,6 +138,13 @@ class JudicialController extends Controller
         }
 
         $validated = $request->validate($rules);
+
+        // Si hay una función de manejo personalizada, ejecutarla
+        if ($callback) {
+            $callback($judicial, $validated);
+        } else {
+            $judicial->fill($validated);
+        }
 
         // Manejo de archivos en cada paso
         if ($request->hasFile('boletin_archivo')) {

@@ -15,7 +15,9 @@
         @csrf
         <div class="mb-3">
             <label for="numero_ley" class="form-label">Número:</label>
-            <input type="numero_ley" name="numero_ley" class="form-control" id="numero_ley" value="{{ old('numero_ley', $tasacion->numero_ley) }}" required>
+            <input type="text" name="numero_ley" class="form-control" id="numero_ley"
+                   value="{{ old('numero_ley', $tasacion->numero_ley) }}"
+                   maxlength="200" required>
         </div>
 
         <div class="mb-3">
@@ -24,8 +26,13 @@
         </div>
 
         <div class="mb-3">
-            <label for="boletin_oficial" class="form-label">Boletín Oficial:</label>
-            <input type="text" name="boletin_oficial" class="form-control" id="boletin_oficial" value="{{ old('boletin_oficial', $tasacion->boletin_oficial) }}" required>
+            <label for="boletin_oficial" class="form-label">Boletín Oficial (Texto o PDF/Word):</label>
+            <input type="text" name="boletin_oficial" class="form-control mb-2" id="boletin_oficial"
+                   value="{{ old('boletin_oficial', $tasacion->boletin_oficial) }}"
+                   placeholder="Ingrese el boletín oficial o suba un archivo">
+
+            <input type="file" name="boletin_oficial_archivo" class="form-control"
+                   id="boletin_oficial_archivo" accept=".pdf,.doc,.docx">
         </div>
 
         <div class="mb-3">

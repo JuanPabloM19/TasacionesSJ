@@ -14,12 +14,24 @@
         @csrf
         <div class="mb-3">
             <label for="dominio_publico" class="form-label">Dominio Público Provincial:</label>
-            <input type="text" name="dominio_publico" class="form-control" id="dominio_publico" value="{{ old('dominio_publico', $judicial->dominio_publico) }}" required>
+            <input type="text" name="dominio_publico" class="form-control mb-2"
+                   id="dominio_publico"
+                   value="{{ old('dominio_publico', $judicial->dominio_publico) }}"
+                   placeholder="Ingrese la resolución o adjunte un archivo">
+
+            <input type="file" name="dominio_publico_pdf" class="form-control"
+                   id="dominio_publico_pdf" accept=".pdf">
         </div>
 
         <div class="mb-3">
             <label for="dominio_privado" class="form-label">Dominio Privado Provincial:</label>
-            <input type="text" name="dominio_privado" class="form-control" id="dominio_privado" value="{{ old('dominio_privado', $judicial->dominio_privado) }}" required>
+            <input type="text" name="dominio_privado" class="form-control mb-2"
+                   id="dominio_privado"
+                   value="{{ old('dominio_privado', $judicial->dominio_privado) }}"
+                   placeholder="Ingrese la resolución o adjunte un archivo">
+
+            <input type="file" name="dominio_privado_pdf" class="form-control"
+                   id="dominio_privado_pdf" accept=".pdf">
         </div>
 
         <button type="submit" class="btn btn-primary">Siguiente <i class="fas fa-arrow-right"></i></button>

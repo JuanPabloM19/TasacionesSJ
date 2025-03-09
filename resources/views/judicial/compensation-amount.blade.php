@@ -38,8 +38,15 @@
 
         <div class="mb-3">
             <label for="instrumento_legal" class="form-label">Instrumento Legal:</label>
-            <input type="text" name="instrumento_legal" class="form-control" id="instrumento_legal" value="{{ old('instrumento_legal', $judicial->instrumento_legal) }}" required>
+            <input type="text" name="instrumento_legal" class="form-control mb-2"
+                   id="instrumento_legal"
+                   value="{{ old('instrumento_legal', $judicial->instrumento_legal) }}"
+                   placeholder="Ingrese el Instrumento Legal o adjunte un archivo">
+
+            <input type="file" name="instrumento_legal_pdf" class="form-control"
+                   id="instrumento_legal_pdf" accept=".pdf">
         </div>
+
 
         <div class="mb-3">
             <label for="concepto_indemnizacion" class="form-label">Concepto Incluido de Indemnización:</label>
