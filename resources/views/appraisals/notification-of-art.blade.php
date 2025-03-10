@@ -10,7 +10,7 @@
     <h2 class="text-center mb-4">Notificación de Acto Expropiatorio</h2>
 
     <div class="form-container">
-    <form method="POST" action="{{ route('appraisals.step4', ['id' => $tasacion->id]) }}" class="p-4 shadow rounded bg-light">
+    <form method="POST" action="{{ route('appraisals.step4', ['id' => $tasacion->id]) }}" class="p-4 shadow rounded bg-light" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
             <label for="numero_exp" class="form-label">Número Expediente:</label>

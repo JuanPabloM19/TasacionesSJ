@@ -11,7 +11,7 @@
     <h2 class="text-center mb-4">Organismo Expropiante</h2>
 
     <div class="form-container">
-    <form method="POST" action="{{ route('appraisals.step2', ['id' => $tasacion->id]) }}" class="p-4 shadow rounded bg-light">
+    <form method="POST" action="{{ route('appraisals.step2', ['id' => $tasacion->id]) }}" class="p-4 shadow rounded bg-light" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
             <label for="nombre_reparticion" class="form-label">Nombre o Repartición:</label>

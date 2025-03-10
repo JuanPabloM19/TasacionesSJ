@@ -10,7 +10,7 @@
 
     <h2 class="text-center mb-4">Transferencia de Dominio</h2>
     <div class="form-container">
-    <form method="POST" action="{{ route('judicial.step8', ['tasacion_id' => $judicial->tasacion_id]) }}" class="p-4 shadow rounded bg-light">
+    <form method="POST" action="{{ route('judicial.step8', ['tasacion_id' => $judicial->tasacion_id]) }}" class="p-4 shadow rounded bg-light" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
             <label for="dominio_publico" class="form-label">Dominio Público Provincial:</label>

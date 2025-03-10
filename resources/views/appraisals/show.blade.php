@@ -31,6 +31,9 @@
             @if($tasacion->superficie_total)
             <p><strong>Superficie Total:</strong> {{ $tasacion->superficie_total }}</p>
             @endif
+            @if($tasacion->unidad_superficie)
+            <p><strong>Unidad de Superficie:</strong> {{ $tasacion->unidad_superficie }}</p>
+            @endif
             @if($tasacion->fraccion_expropiar)
             <p><strong>Fraccion a expropiar:</strong> {{ $tasacion->fraccion_expropiar }}</p>
             @endif
@@ -90,7 +93,7 @@
     @endif
 
     {{-- Step 4: Notificación Acto Expropiatorio --}}
-    @if($tasacion->numero_exp || $tasacion->monto_acordado || $tasacion->fecha_notificacion || $tasacion->acta_numero )
+    @if($tasacion->numero_exp || $tasacion->monto_acordado || $tasacion->fecha_notificacion || $tasacion->acta_numero || $tasacion->acta_documento )
     <div class="card mb-3">
         <div class="card-header titb">
             Notificación Acto Expropiatorio (4)
@@ -107,6 +110,13 @@
             @endif
             @if($tasacion->acta_numero)
             <p><strong>Numero de acta:</strong> {{ $tasacion->acta_numero }}</p>
+            @endif
+            @if($tasacion->acta_documento)
+                <p><strong>Documento de acta:</strong>
+                    <a href="{{ asset('storage/'.$tasacion->acta_documento) }}" class="btn btn-primary btn-sm" target="_blank">
+                        Descargar
+                    </a>
+                </p>
             @endif
         </div>
     </div>
@@ -214,22 +224,28 @@
 @endif
 
 {{-- Step 8: Transferencia de Dominio --}}
-@if($tasacion->tasacionJudicial->dominio_publico || $tasacion->tasacionJudicial->dominio_privado)
+@if($tasacion->tasacionJudicial->dominio_publico || $tasacion->tasacionJudicial->dominio_privado || $tasacion->tasacionJudicial->dominio_publico_pdf || $tasacion->tasacionJudicial->dominio_privado_pdf)
 <div class="card mb-3">
     <div class="card-header bg-warning text-white">
         Transferencia de Dominio (8)
     </div>
     <div class="card-body">
-        @if($tasacion->tasacionJudicial->dominio_publico)
+    @if($tasacion->tasacionJudicial->dominio_publico)
+        <p><strong>Concepto de Indemnización:</strong> ${{ $tasacion->tasacionJudicial->dominio_publico }}</p>
+    @endif
+    @if($tasacion->tasacionJudicial->dominio_privado)
+        <p><strong>Concepto de Indemnización:</strong> ${{ $tasacion->tasacionJudicial->dominio_privado }}</p>
+    @endif
+        @if($tasacion->tasacionJudicial->dominio_publico_pdf)
             <p><strong>Dominio Publico:</strong>
-                <a href="{{ asset('storage/'.$tasacion->tasacionJudicial->dominio_publico) }}" class="btn btn-primary btn-sm" target="_blank">
+                <a href="{{ asset('storage/'.$tasacion->tasacionJudicial->dominio_publico_pdf) }}" class="btn btn-primary btn-sm" target="_blank">
                     Descargar
                 </a>
             </p>
         @endif
-        @if($tasacion->tasacionJudicial->dominio_privado)
+        @if($tasacion->tasacionJudicial->dominio_privado_pdf)
             <p><strong>Dominio Privado:</strong>
-                <a href="{{ asset('storage/'.$tasacion->tasacionJudicial->dominio_privado) }}" class="btn btn-primary btn-sm" target="_blank">
+                <a href="{{ asset('storage/'.$tasacion->tasacionJudicial->dominio_privado_pdf) }}" class="btn btn-primary btn-sm" target="_blank">
                     Descargar
                 </a>
             </p>
