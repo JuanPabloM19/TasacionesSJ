@@ -30,7 +30,6 @@
 
     </head>
     <body>
-        <div>
             @include('layouts.navigation')
 
             <!-- Page Heading -->
@@ -41,6 +40,7 @@
                     </div>
                 </header>
             @endisset
+        <div class="main-content" id="mainContent"> {{-- Contenedor del contenido principal --}}
 
             <!-- Page Content -->
             <main>

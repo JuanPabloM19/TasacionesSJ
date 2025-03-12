@@ -139,12 +139,18 @@ body {
     .main-content {
         margin-left: 250px; /* Deja espacio para el sidebar en pantallas grandes */
         padding: 20px;
-        transition: margin-left 0.3s;
+        transition: margin-left 0.3s ease-in-out;
+    }
+
+    /* Si el sidebar está oculto en mobile */
+    .sidebar.show ~ .main-content {
+        margin-left: 250px;
     }
 
     /* Responsivo para pantallas pequeñas */
     @media (max-width: 768px) {
         .main-content {
-            margin-left: 0; /* El contenido ocupará todo el ancho en pantallas pequeñas */
+            margin-left: 0;
+            padding-top: 80px; /* El contenido ocupará todo el ancho en pantallas pequeñas */
         }
     }

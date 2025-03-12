@@ -208,17 +208,20 @@ document.addEventListener("DOMContentLoaded", function() {
     const menuToggle = document.getElementById("menuToggle");
     const overlay = document.getElementById("overlay");
     const mobileHeader = document.getElementById("mobileHeader");
+    const mainContent = document.getElementById("mainContent"); // Agregado
 
     function openSidebar() {
         sidebar.classList.add("show");
         overlay.classList.add("show");
         mobileHeader.style.display = "none"; // Oculta la barra superior
+        mainContent.style.marginLeft = "250px"; // Desplazar contenido
     }
 
     function closeMenu() {
         sidebar.classList.remove("show");
         overlay.classList.remove("show");
         mobileHeader.style.display = "flex"; // Muestra la barra superior nuevamente
+        mainContent.style.marginLeft = "0"; // Restaurar contenido en mobile
     }
 
     menuToggle.addEventListener("click", openSidebar);
