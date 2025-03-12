@@ -10,15 +10,17 @@ class AdminUserSeeder extends Seeder
 {
     public function run()
     {
-        User::create([
-            'username' => 'admin',
-            'name' => 'Administrador',
-            'apellido' => 'General',
-            'dni' => '12345678',
-            'telefono' => '1234567890',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin'
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@example.com'], // Condición para verificar si ya existe
+            [
+                'username' => 'admin',
+                'name' => 'Administrador',
+                'apellido' => 'General',
+                'dni' => '12345678',
+                'telefono' => '1234567890',
+                'password' => bcrypt('password'), // Usa bcrypt para encriptar la contraseña
+                'role' => 'admin',
+            ]
+        );
     }
 }
