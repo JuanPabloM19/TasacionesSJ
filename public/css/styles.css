@@ -4,6 +4,12 @@ body {
     margin: 0;
     padding: 0;
 }
+
+/* Resetear margen izquierdo en la página de login */
+body.route-login .main-content {
+    margin-left: 0 !important;
+}
+
 @media (max-width: 768px) {
     .header-section {
         flex-direction: column;
@@ -135,12 +141,7 @@ body {
         }
     }
 
-    /* Asegurarse de que el contenido principal no se solape con el sidebar */
-    .main-content {
-        margin-left: 250px; /* Deja espacio para el sidebar en pantallas grandes */
-        padding: 20px;
-        transition: margin-left 0.3s ease-in-out;
-    }
+
 
     /* Si el sidebar está oculto en mobile */
     .sidebar.show ~ .main-content {

@@ -75,12 +75,9 @@
             <p><strong>Fecha de Ley:</strong> {{ $tasacion->fecha_ley }}</p>
             @endif
             @if($tasacion->boletin_oficial)
-                <p><strong>Boletin Oficial:</strong>
-                    <a href="{{ asset('storage/'.$tasacion->boletin_oficial) }}" class="btn btn-primary btn-sm" target="_blank">
-                        Descargar
-                    </a>
-                </p>
+                <p><strong>Boletin Oficial:</strong> ${{ $tasacion->boletin_oficial }}</p>
             @endif
+
             @if($tasacion->ley_documento)
                 <p><strong>Documento de Ley:</strong>
                     <a href="{{ asset('storage/'.$tasacion->ley_documento) }}" class="btn btn-primary btn-sm" target="_blank">
@@ -231,10 +228,10 @@
     </div>
     <div class="card-body">
     @if($tasacion->tasacionJudicial->dominio_publico)
-        <p><strong>Concepto de Indemnización:</strong> ${{ $tasacion->tasacionJudicial->dominio_publico }}</p>
+        <p><strong>Dominio Publico:</strong> ${{ $tasacion->tasacionJudicial->dominio_publico }}</p>
     @endif
     @if($tasacion->tasacionJudicial->dominio_privado)
-        <p><strong>Concepto de Indemnización:</strong> ${{ $tasacion->tasacionJudicial->dominio_privado }}</p>
+        <p><strong>Dominio Privado:</strong> ${{ $tasacion->tasacionJudicial->dominio_privado }}</p>
     @endif
         @if($tasacion->tasacionJudicial->dominio_publico_pdf)
             <p><strong>Dominio Publico:</strong>

@@ -21,8 +21,8 @@
                 <th>Fecha de Alta</th>
                 <th>Dni</th>
                 <th>Telefono</th>
-                <th>Acciones</th>
                 <th>Rol</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>

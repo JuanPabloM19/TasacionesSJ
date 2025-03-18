@@ -13,14 +13,58 @@ class JudicialController extends Controller
         return TasacionJudicial::firstOrNew(['tasacion_id' => $tasacion_id]);
     }
 
+    public function createJudicial()
+    {
+        return view('judicial.judicial');
+    }
+
+    public function storeJudicial(Request $request)
+    {
+        // Validar los datos
+        $validated = $request->validate([
+            'nomenclatura' => ['required', 'digits:15', 'unique:tasaciones,nomenclatura'],
+            'inscripcion_dominio' => ['required', 'max:200'],
+            'ubicacion' => ['required', 'max:200'],
+            'propietarios' => ['required', 'max:200'],
+            'nro_plano' => ['required', 'regex:/^\d{2}\/\d{5}\/\d{4}$/'],
+            'superficie_total' => ['required', 'numeric'],
+            'unidad_superficie' => ['required', 'in:m2,ha'],
+            'fraccion_expropiar' => ['required', 'max:200'],
+            'nombre_reparticion' => ['required', 'max:200'],
+            'expediente_nro' => ['required', 'regex:/^\d{3}-\d{5}-\d{4}$/'],
+            'fecha_iniciacion' => 'required|date',
+        ]);
+
+        // Crear la tasación con nomenclatura y número de plano
+        $tasacion = Tasacion::create([
+            'nomenclatura' => $validated['nomenclatura'],
+            'inscripcion_dominio' => $validated['inscripcion_dominio'],
+            'ubicacion' => $validated['ubicacion'],
+            'propietarios' => $validated['propietarios'],
+            'nro_plano' => $validated['nro_plano'],
+            'superficie_total' => $validated['superficie_total'],
+            'unidad_superficie' => $validated['unidad_superficie'],
+            'fraccion_expropiar' => $validated['fraccion_expropiar'],
+            'nombre_reparticion' => $validated['nombre_reparticion'],
+            'expediente_nro' => $validated['expediente_nro'],
+            'fecha_iniciacion' => $validated['fecha_iniciacion'],
+            'estado' => 'step6', // Marcarla en etapa judicial
+        ]);
+
+        // Redirigir al paso 6 con la tasación creada
+        return redirect()->route('judicial.step6', ['tasacion_id' => $tasacion->id]);
+    }
+
     public function step6(Request $request, $tasacion_id)
     {
         $tasacion = Tasacion::find($tasacion_id);
         $judicial = $this->getJudicialTasacion($tasacion_id);
 
-        // Si la tasación ya está en un paso judicial, no permitir pasar de nuevo
-        if ($tasacion->estado == 'step6') {
-            return redirect()->route('judicial.step7', ['tasacion_id' => $tasacion->id]);
+        // Si no tiene nomenclatura y número de plano, asignarlos desde la tasación administrativa
+        if (empty($tasacion->nomenclatura) && empty($tasacion->nro_plano)) {
+            $tasacion->nomenclatura = $request->nomenclatura;  // Guardar nomenclatura
+            $tasacion->nro_plano = $request->nro_plano;  // Guardar número de plano
+            $tasacion->save();
         }
 
         if ($request->isMethod('get')) {
@@ -55,7 +99,6 @@ class JudicialController extends Controller
         // Redirigir al siguiente paso
         return redirect()->route('judicial.step7', ['tasacion_id' => $judicial->tasacion_id]);
     }
-
     public function step7(Request $request, $tasacion_id)
     {
         return $this->updateStep($request, $tasacion_id, 7, 'compensation-amount', [

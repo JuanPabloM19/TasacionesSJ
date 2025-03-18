@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Individualización de Inmuebles')
+@section('title', content: 'Individualización de Inmuebles')
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/styles.css') }}">

@@ -176,9 +176,33 @@
             @endif
         </table>
     </div>
-    <form method="GET" action="{{ route('appraisals.step1', ['id' => 0]) }}">
-        <button type="submit" class="btn btn-success add-btn">Agregar Tasación</button>
-    </form>
+    <!-- Botón para abrir el modal -->
+    <button type="button" class="btn btn-success add-btn" data-bs-toggle="modal" data-bs-target="#chooseFlowModal">
+        Agregar Tasación
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="chooseFlowModal" tabindex="-1" aria-labelledby="chooseFlowModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chooseFlowModalLabel">Seleccionar Tipo de Tasación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Elige cómo quieres iniciar la tasación:</p>
+                    <div class="d-grid gap-2">
+                        <a href="{{ route('appraisals.step1', ['id' => 0]) }}" class="btn btn-primary">
+                            Iniciar Etapa Administrativa
+                        </a>
+                        <a href="{{ route('appraisals.judicial.create') }}" class="btn btn-danger">
+                            Iniciar Etapa Judicial
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal de Selección de Pasos -->

@@ -156,7 +156,7 @@ class TasacionesController extends Controller
         if ($request->hasFile('acta_documento')) {
             $acta = $request->file('acta_documento');
             $acta_filename = uniqid() . '.' . $acta->getClientOriginalExtension();
-            $validated['acta_documento'] = $acta->storeAs('public/documents', $acta_filename);
+            $validated['acta_documento'] = $acta->storeAs('documents', $acta_filename);
             // Si se sube archivo, se borra el campo de texto
             $validated['acta_numero'] = null;
         }
@@ -185,7 +185,7 @@ class TasacionesController extends Controller
             $document = $request->file('monto_pagado');
             $filename = uniqid() . '.' . $document->getClientOriginalExtension();
             // Guardar el archivo en la carpeta 'documents'
-            $validated['monto_pagado'] = $document->storeAs('public/documents', $filename);
+            $validated['monto_pagado'] = $document->storeAs('documents', $filename);
         }
 
         $tasacion->update(array_merge($validated, ['estado' => 'completed']));
@@ -290,7 +290,7 @@ class TasacionesController extends Controller
     public function downloadDocument($filename)
     {
         // Reemplaza 'private/documents' por la ruta correcta en tu sistema
-        $path = storage_path('app/private/documents/' . $filename);
+        $path = storage_path('app/public/documents/' . $filename);
 
         // Verifica si el archivo existe
         if (file_exists($path)) {

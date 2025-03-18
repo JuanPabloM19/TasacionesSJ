@@ -73,6 +73,10 @@ Route::middleware([\App\Http\Middleware\RoleMiddleware::class.':admin,publicador
     Route::get('/appraisals/{id}/updateStatus/{status}', [TasacionesController::class, 'updateStatus'])->name('appraisals.updateStatus');
 
      // Rutas para el proceso judicial
+
+     Route::get('/judicial/judicial/', [JudicialController::class, 'createJudicial'])->name('appraisals.judicial.create');
+     Route::post('/judicial/store', [JudicialController::class, 'storeJudicial'])->name('appraisals.judicial.store');
+
      Route::get('judicial/judicial-action/{tasacion_id}', [JudicialController::class, 'step6'])->name('judicial.step6');
      Route::post('/judicial/judicial-action/{tasacion_id}', [JudicialController::class, 'step6']);
 
